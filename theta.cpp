@@ -1,6 +1,4 @@
 #include "theta.h"
-#include <math.h>
-#include <iostream>
 Theta::~Theta()
 {
 }
@@ -160,7 +158,7 @@ void Theta::makeSecondaryPath(const Map &map, Node curNode)
               iter++;
               forpath2=&*iter;
     }
-    sresult.lppath = &lppath; //здесь у sresult - указатель на константу.
+    sresult.lppath = &lppath;
 }
 
 void Theta::makePrimaryPath(Node curNode)

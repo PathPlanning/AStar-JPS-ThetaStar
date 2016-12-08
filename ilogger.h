@@ -1,12 +1,8 @@
 #ifndef ILOGGER_H
 #define	ILOGGER_H
-
-#include <ctime>
 #include "map.h"
 #include "list.h"
-#include <string>
 #include <unordered_map>
-#include <unordered_set>
 
 class ILogger
 {

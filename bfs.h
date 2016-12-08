@@ -1,12 +1,11 @@
 #ifndef BFS_H
 #define BFS_H
-#include "gl_const.h"
 #include "isearch.h"
 
 class BFS : public ISearch
 {
     public:
-        BFS(int i);
+        BFS();
         ~BFS(void);
 
         void addOpen(Node newNode);

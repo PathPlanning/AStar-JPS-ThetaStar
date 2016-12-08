@@ -1,17 +1,18 @@
 #ifndef ENVIRONMENTOPTIONS_H
 #define ENVIRONMENTOPTIONS_H
+#include "gl_const.h"
 
 class EnvironmentOptions
 {
 public:
-    EnvironmentOptions(int MT, bool AS, double LC, double DC, int AD);
+    EnvironmentOptions(int MT, bool AS, double LC, double DC, bool AD, bool RP);
     EnvironmentOptions();
-    int    metrictype; //тип метрики для подсчета эвристики
-    bool   allowsqueeze;//опция разрешающая/запрещающая проход через "узкий коридор"
-    double  linecost; //стоимость перемещения по горизонтали и вертикали
-    double  diagonalcost; //стоимость перемещаения по диагонали
-    int    allowdiagonal; //опция разрешающая/запрещающая перемещения по диагонали
-    bool   useresetparent; //опция разрешаяющая/запрещающая использование метода resetparent в jp_search
+    int     metrictype;     //Can be chosen Euclidean, Manhattan and Diagonal distance
+    bool    allowsqueeze;   //Option that allows to move throught "bottleneck"
+    double  linecost;       //Cost of straight moves
+    double  diagonalcost;   //Cost of diagonal moves
+    bool    allowdiagonal;  //Option that allows to make diagonal moves
+    bool    useresetparent; //Option that allows JPS use resetParent function like in Theta*
 
 };
 

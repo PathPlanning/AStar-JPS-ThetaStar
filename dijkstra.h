@@ -1,12 +1,11 @@
 #ifndef DIJKSTRA_H
 #define DIJKSTRA_H
-#include "gl_const.h"
 #include "isearch.h"
 
 class Dijkstra : public ISearch
 {
     public:
-        Dijkstra(int i);
+        Dijkstra();
         ~Dijkstra(void);
 
         void addOpen(Node newNode);

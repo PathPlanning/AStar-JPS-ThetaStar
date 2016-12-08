@@ -7,9 +7,12 @@
 #include "ilogger.h"
 #include "searchresult.h"
 #include "environmentoptions.h"
-#include "gl_const.h"
-#include <iostream>
-
+#include "jp_search.h"
+#include "astar.h"
+#include "bfs.h"
+#include "dijkstra.h"
+#include "theta.h"
+#include "xmllogger.h"
 
 class Mission
 {

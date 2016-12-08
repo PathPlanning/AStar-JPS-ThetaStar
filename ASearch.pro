@@ -51,5 +51,4 @@ HEADERS += \
     searchresult.h \
     jp_search.h \
     theta.h \
-    environmentoptions.h \
-    open.h
+    environmentoptions.h

@@ -1,9 +1,6 @@
 #include "astar.h"
-#include <stdlib.h>
-#include <math.h>
-#include "isearch.h"
-#include <iostream>
-Astar::Astar(double w, int BT, int SL, int i)
+
+Astar::Astar(double w, bool BT, int SL)
 {
     hweight = w;
     breakingties = BT;
@@ -16,25 +13,14 @@ Astar::~Astar()
 
 double Astar::computeHFromCellToCell(int start_i, int start_j, int fin_i, int fin_j, const EnvironmentOptions &options)
 {
-    #ifdef __linux__
-        if (options.metrictype == CN_SP_MT_MANH)
-                return options.linecost * (abs(fin_i - start_i) + abs(fin_j - start_j));
-        if (options.metrictype == CN_SP_MT_CHEB)
-                return options.linecost * std::max(abs(fin_i - start_i),abs(fin_j - start_j));
-        if (options.metrictype == CN_SP_MT_EUCL)
-                return options.linecost * (sqrt((fin_i - start_i)*(fin_i - start_i)+(fin_j - start_j)*(fin_j - start_j)));
-        if (options.metrictype == CN_SP_MT_DIAG)
-                return (options.linecost * abs(abs(fin_i - start_i) - abs(fin_j - start_j)) + options.diagonalcost * (std::min(abs(fin_i - start_i),abs(fin_j - start_j))));
-    #else
-        if (options.metrictype == CN_SP_MT_MANH)
-                return options.linecost * (abs(fin_i - start_i) + abs(fin_j - start_j));
-        if (options.metrictype == CN_SP_MT_CHEB)
-                return options.linecost * std::max(abs(fin_i - start_i),abs(fin_j - start_j));
-        if (options.metrictype == CN_SP_MT_EUCL)
-                return options.linecost * (sqrt((fin_i - start_i)*(fin_i - start_i)+(fin_j - start_j)*(fin_j - start_j)));
-        if (options.metrictype == CN_SP_MT_DIAG)
-                return (options.linecost * abs(abs(fin_i - start_i) - abs(fin_j - start_j)) + options.diagonalcost * (std::min(abs(fin_i - start_i),abs(fin_j - start_j))));
-    #endif
+    if (options.metrictype == CN_SP_MT_MANH)
+        return options.linecost * (abs(fin_i - start_i) + abs(fin_j - start_j));
+    if (options.metrictype == CN_SP_MT_CHEB)
+        return options.linecost * std::max(abs(fin_i - start_i),abs(fin_j - start_j));
+    if (options.metrictype == CN_SP_MT_EUCL)
+        return options.linecost * (sqrt((fin_i - start_i)*(fin_i - start_i)+(fin_j - start_j)*(fin_j - start_j)));
+    if (options.metrictype == CN_SP_MT_DIAG)
+        return (options.linecost * abs(abs(fin_i - start_i) - abs(fin_j - start_j)) + options.diagonalcost * (std::min(abs(fin_i - start_i),abs(fin_j - start_j))));
     return 0;
 }
 

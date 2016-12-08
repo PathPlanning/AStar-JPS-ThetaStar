@@ -1,12 +1,4 @@
 #include "jp_search.h"
-#include <stdlib.h>
-#include "iostream"
-#include <math.h>
-#ifdef __linux__
-    #include <sys/time.h>
-#else
-    #include <windows.h>
-#endif
 
 JP_Search::~JP_Search()
 {
@@ -30,48 +22,49 @@ void JP_Search::findJP(int move_i, int move_j, Node curNode, const Map &map, std
                 curNode.g = curNode.g+MoveCost(curNode.i, curNode.j, curNode.i+move_i, curNode.j+move_j, options);
             }
             else
-                return;//наткнулись на препятствие или вышли за границы карты
+                return;
         }
-        else return;
-        if(map.goal_i == curNode.i && map.goal_j == curNode.j)//если дошли до целевой вершины
+        else
+            return;
+        if(map.goal_i == curNode.i && map.goal_j == curNode.j)
             findOK = true;
-        if(options.allowdiagonal == CN_SP_AD_TRUE)//если движение по диагонали разрешено
+        if(options.allowdiagonal == CN_SP_AD_TRUE)//check whethe diagonal moves is allowed
         {
-            if(move_i == 0 && map.CellOnGrid(curNode.i, curNode.j+move_j))//если движемся по j
+            if(move_i == 0 && map.CellOnGrid(curNode.i, curNode.j+move_j))//straight move along j
             {
-                if(map.CellOnGrid(curNode.i+1, curNode.j))//проверка на границы
-                    if(map.CellIsTraversable(curNode.i+1, curNode.j+move_j) && map.CellIsObstacle(curNode.i+1, curNode.j))//проверка на вынужденных соседей
+                if(map.CellOnGrid(curNode.i+1, curNode.j))
+                    if(map.CellIsTraversable(curNode.i+1, curNode.j+move_j) && map.CellIsObstacle(curNode.i+1, curNode.j))//check forced neighbor
                         findOK = true;
                 if(map.CellOnGrid(curNode.i-1,curNode.j))
-                    if(map.CellIsTraversable(curNode.i-1, curNode.j+move_j) && map.CellIsObstacle(curNode.i-1, curNode.j))//с обеих сторон
+                    if(map.CellIsTraversable(curNode.i-1, curNode.j+move_j) && map.CellIsObstacle(curNode.i-1, curNode.j))
                         findOK = true;
             }
-            if(move_j == 0 && map.CellOnGrid(curNode.i+move_i, curNode.j))//если движемся по i
+            if(move_j == 0 && map.CellOnGrid(curNode.i+move_i, curNode.j))//straight move along i
             {
                 if(map.CellOnGrid(curNode.i, curNode.j+1))
-                    if(map.CellIsTraversable(curNode.i+move_i, curNode.j+1) && map.CellIsObstacle(curNode.i, curNode.j+1))//проверка на вынужденных соседей
+                    if(map.CellIsTraversable(curNode.i+move_i, curNode.j+1) && map.CellIsObstacle(curNode.i, curNode.j+1))
                         findOK = true;
                 if(map.CellOnGrid(curNode.i, curNode.j-1))
-                    if(map.CellIsTraversable(curNode.i+move_i, curNode.j-1) && map.CellIsObstacle(curNode.i, curNode.j-1))//с обеих сторон
+                    if(map.CellIsTraversable(curNode.i+move_i, curNode.j-1) && map.CellIsObstacle(curNode.i, curNode.j-1))
                         findOK = true;
             }
-            if(move_i != 0 && move_j != 0)//если движемся по диагонали
+            if(move_i != 0 && move_j != 0)//diagonal move
             {
                 if(map.CellOnGrid(curNode.i-move_i, curNode.j+move_j))
-                    if(map.CellIsObstacle(curNode.i-move_i, curNode.j) && map.CellIsTraversable(curNode.i-move_i, curNode.j+move_j))//проверка на вынужденных соседей
+                    if(map.CellIsObstacle(curNode.i-move_i, curNode.j) && map.CellIsTraversable(curNode.i-move_i, curNode.j+move_j))
                         findOK = true;
                 if(!findOK && map.CellOnGrid(curNode.i+move_i, curNode.j-move_j))
-                    if(map.CellIsObstacle(curNode.i, curNode.j-move_j) && map.CellIsTraversable(curNode.i+move_i, curNode.j-move_j))//проверка на вынужденных соседей с другой стороны
+                    if(map.CellIsObstacle(curNode.i, curNode.j-move_j) && map.CellIsTraversable(curNode.i+move_i, curNode.j-move_j))
                         findOK = true;
                 if(!findOK)
-                    if(findNeighbors(move_i, 0, curNode, map))//проверка на вынужденного соседа по i
+                    if(findNeighbors(move_i, 0, curNode, map))//looking for forced neighbor along i
                         findOK = true;
                 if(!findOK)
-                    if(findNeighbors(0, move_j, curNode, map))//проверка на вынужденного соседа по j
+                    if(findNeighbors(0, move_j, curNode, map))//looking for forced neighbor along j
                         findOK = true;
             }
         }
-        else//если движение по диагонали запрещено
+        else//only straight moves is allowed
         {
             if(!findOK)
                 if(findNeighbors(move_j, move_i, curNode, map))
@@ -92,18 +85,18 @@ bool JP_Search::findNeighbors(int move_i, int move_j, Node curNode, const Map &m
 {
     while(map.CellOnGrid(curNode.i, curNode.j) && map.CellIsTraversable(curNode.i, curNode.j))
     {
-        if(map.goal_i == curNode.i && map.goal_j == curNode.j)//если дошли до целевой вершины
+        if(map.goal_i == curNode.i && map.goal_j == curNode.j)//goal location is found
             return true;
-        if(move_i == 0 && map.CellOnGrid(curNode.i, curNode.j+move_j))//если движемся по j
+        if(move_i == 0 && map.CellOnGrid(curNode.i, curNode.j+move_j))
         {
-            if(map.CellOnGrid(curNode.i+1, curNode.j))//проверка на границы
-                if(map.CellIsTraversable(curNode.i+1, curNode.j+move_j) && map.CellIsObstacle(curNode.i+1, curNode.j))//проверка на вынужденных соседей
+            if(map.CellOnGrid(curNode.i+1, curNode.j))
+                if(map.CellIsTraversable(curNode.i+1, curNode.j+move_j) && map.CellIsObstacle(curNode.i+1, curNode.j))
                    return true;
              if(map.CellOnGrid(curNode.i-1,curNode.j))
-                 if(map.CellIsTraversable(curNode.i-1, curNode.j+move_j) && map.CellIsObstacle(curNode.i-1, curNode.j))//с обеих сторон
+                 if(map.CellIsTraversable(curNode.i-1, curNode.j+move_j) && map.CellIsObstacle(curNode.i-1, curNode.j))
                    return true;
          }
-         if(move_j == 0 && map.CellOnGrid(curNode.i+move_i, curNode.j))//если движемся по i
+         if(move_j == 0 && map.CellOnGrid(curNode.i+move_i, curNode.j))
          {
              if(map.CellOnGrid(curNode.i, curNode.j+1))
                  if(map.CellIsTraversable(curNode.i+move_i, curNode.j+1) && map.CellIsObstacle(curNode.i, curNode.j+1))
@@ -120,7 +113,7 @@ bool JP_Search::findNeighbors(int move_i, int move_j, Node curNode, const Map &m
 
 
 
-int JP_Search::findDirection(int current_i, int parent_i)//определяем направление
+int JP_Search::findDirection(int current_i, int parent_i)
 {
     if(current_i < parent_i)
         return -1;
@@ -137,8 +130,8 @@ std::list<Node> JP_Search::findSuccessors(Node curNode, const Map &map, const En
 
     if(options.allowdiagonal == CN_SP_AD_TRUE)
     {
-        if(curNode.i == map.start_i && curNode.j == map.start_j)
-            for(int n=-1; n<=1; n++)//цикл по всем соседним вершинам
+        if(curNode.i == map.start_i && curNode.j == map.start_j)//if curNode is the start location, then look for jump points in all directions
+            for(int n=-1; n<=1; n++)
                 for(int m=-1; m<=1; m++)
                     if(n != 0 || m != 0)
                         findJP(n, m, curNode, map, successors, options);
@@ -147,26 +140,26 @@ std::list<Node> JP_Search::findSuccessors(Node curNode, const Map &map, const En
             move_i = findDirection(curNode.i, curNode.parent->i);
             move_j = findDirection(curNode.j, curNode.parent->j);
 
-            if(move_i != 0 && move_j != 0)//если прыжковая точка найдена по диагонали
+            if(move_i != 0 && move_j != 0)//if curNoode is a diagonal jump point
             {
                 if(map.CellIsObstacle(curNode.i-move_i, curNode.j))
                     findJP(-move_i, move_j, curNode, map, successors, options);
                 if(map.CellIsObstacle(curNode.i, curNode.j-move_j))
                     findJP(move_i, -move_j, curNode, map, successors, options);
-                findJP(move_i, 0, curNode, map, successors, options);//ищем прыжковые точки по вертикали
-                findJP(0, move_j, curNode, map, successors, options);//и горизонтали
+                findJP(move_i, 0, curNode, map, successors, options);//look for jump point in straight direction along i
+                findJP(0, move_j, curNode, map, successors, options);//the same check along j
             }
-            findJP(move_i, move_j, curNode, map, successors, options);//поиск прыжковой точки в том же направлении
-            if(move_i == 0)//если прыжковая точка найдена по горизонтали
+            findJP(move_i, move_j, curNode, map, successors, options);//continue to look for jump points in the same direction
+            if(move_i == 0)
             {
                 if(map.CellOnGrid(curNode.i-move_j, curNode.j))
                     if(map.CellIsObstacle(curNode.i-move_j, curNode.j))
-                        findJP(-move_j, move_j, curNode, map, successors, options);//поиск прыжковой точки по диагонали
+                        findJP(-move_j, move_j, curNode, map, successors, options);
                 if(map.CellOnGrid(curNode.i+move_j, curNode.j))
                     if(map.CellIsObstacle(curNode.i+move_j, curNode.j))
-                        findJP(move_j, move_j, curNode, map, successors, options);//в двух направлениях
+                        findJP(move_j, move_j, curNode, map, successors, options);
             }
-            else if(move_j==0)//то же самое, только по вертикали
+            else if(move_j==0)
             {
                 if(map.CellOnGrid(curNode.i, curNode.j-move_i))
                     if(map.CellIsObstacle(curNode.i, curNode.j-move_i))
@@ -177,7 +170,7 @@ std::list<Node> JP_Search::findSuccessors(Node curNode, const Map &map, const En
             }
         }
     }
-    else //если движение по диагонали запрещено
+    else //only straight moves as allowed
     {
         if(curNode.i == map.start_i && curNode.j == map.start_j)
             for(int n=-1; n<=1; n++)
@@ -270,14 +263,14 @@ void JP_Search::makeSecondaryPath(const Map &map, Node curNode)
               iter++;
               forpath2=&*iter;
     }
-    sresult.lppath = &lppath; //здесь у sresult - указатель на константу.
+    sresult.lppath = &lppath;
 }
 
 Node JP_Search::resetParent(Node current, Node parent, const Map &map, const EnvironmentOptions &options )
 {
     if(options.useresetparent==false)
         return current;
-    if (((parent.i==map.start_i) && (parent.j==map.start_j)) ||(((current.i==map.start_i) && (current.j==map.start_j))))
+    if ((parent.i == map.start_i && parent.j == map.start_j) || (current.i == map.start_i && current.j == map.start_j))
         return current;
 
     bool ok=true;
@@ -331,12 +324,9 @@ Node JP_Search::resetParent(Node current, Node parent, const Map &map, const Env
 
     if (ok)
     {
-        if ((parent.parent->g + computeHFromCellToCell(parent.parent->i,parent.parent->j, current.i, current.j, options)-current.g )<0.0001)
-        {
-            current.g=parent.parent->g +computeHFromCellToCell(parent.parent->i,parent.parent->j, current.i, current.j, options);
-            current.parent=parent.parent;
-            return current;
-        }
+        current.g=parent.parent->g +computeHFromCellToCell(parent.parent->i,parent.parent->j, current.i, current.j, options);
+        current.parent=parent.parent;
+        return current;
     }
     return current;
 }

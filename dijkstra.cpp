@@ -1,8 +1,7 @@
 #include "dijkstra.h"
 
-Dijkstra::Dijkstra(int i)
+Dijkstra::Dijkstra()
 {
-    open=new NodeList[i];
 }
 
 Dijkstra::~Dijkstra(void)

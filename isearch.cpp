@@ -1,6 +1,4 @@
-#include "gl_const.h"
 #include "isearch.h"
-
 
 ISearch::ISearch()
 {
@@ -78,22 +76,19 @@ SearchResult ISearch::startSearch(ILogger *Logger, const Map &map, const Environ
         Logger->writeToLogOpenClose(open,close,map.height);
 
     }
-    //Поиск завершился!
     sresult.pathfound = false;
     sresult.nodescreated = closeSize + openSize;
     sresult.numberofsteps = closeSize;
     if(pathfound)
     {
         sresult.pathfound = true;
-        //путь восстанолвенный по обратным указателям (для всех алгоритмов)
         makePrimaryPath(curNode);
         sresult.hppath = &hppath;
         sresult.pathlength = curNode.g;
     }
-    //Т.к. восстановление пути по обратным указателям - неотъемлемая часть алгоритмов, время останавливаем только сейчас!
+    //stop the timer now because making path using back pointers is a part of the algorithm
     end = std::chrono::system_clock::now();
     sresult.time = static_cast<double>(std::chrono::duration_cast<std::chrono::microseconds>(end - start).count())/1000000;
-    //перестроенный путь (hplevel, либо lplevel, в зависимости от алгоритма)
     if(pathfound)
         makeSecondaryPath(map, curNode);
     return sresult;
@@ -178,7 +173,7 @@ void ISearch::makePrimaryPath(Node curNode)
         current=*current.parent;
     }
     lppath.List.push_front(current);
-    sresult.lppath = &lppath; //здесь у sresult - указатель на константу.
+    sresult.lppath = &lppath; //Here is a constant pointer
 }
 
 void ISearch::makeSecondaryPath(const Map &map, Node curNode)

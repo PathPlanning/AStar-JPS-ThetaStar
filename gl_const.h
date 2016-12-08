@@ -132,14 +132,15 @@
         #define CNS_SP_BT_GMIN "g-min"
         #define CNS_SP_BT_GMAX "g-max"
 
-        #define CN_SP_BT_GMIN 1
-        #define CN_SP_BT_GMAX 2
+        #define CN_SP_BT_GMIN 0
+        #define CN_SP_BT_GMAX 1
 
     #define CN_SP_SL 9
-        #define CN_SP_SL_NOLIMIT -1 //важно чтобы константа была меньше либо равна нулю!
+        #define CN_SP_SL_NOLIMIT -1
 
     #define CN_SP_RP 10 //UseResetParent
-
+        #define CN_SP_RP_TRUE 1
+        #define CN_SP_RP_FALSE 0
 
 
 

@@ -1,10 +1,4 @@
 #include "xmllogger.h"
-#include "tinystr.h"
-#include "tinyxml.h"
-#include "gl_const.h"
-#include "node.h"
-#include <sstream>
-#include <iostream>
 
 XmlLogger::~XmlLogger()
 {

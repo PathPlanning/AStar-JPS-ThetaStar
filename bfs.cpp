@@ -1,8 +1,7 @@
 #include "bfs.h"
 
-BFS::BFS(int i)
+BFS::BFS()
 {
-    open=new NodeList[i];
 }
 
 BFS::~BFS()

@@ -1,22 +1,5 @@
 #include "map.h"
 
-
-std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems) {
-    std::stringstream ss(s);
-    std::string item;
-    while (std::getline(ss, item, delim)) {
-        elems.push_back(item);
-    }
-    return elems;
-}
-
-
-std::vector<std::string> split(const std::string &s, char delim) {
-    std::vector<std::string> elems;
-    split(s, delim, elems);
-    return elems;
-}
-
 Map::Map()
 {
     height = -1;
@@ -65,10 +48,10 @@ bool Map::getMap(const char* FileName)
     TiXmlElement *root = 0, *map = 0, *element = 0;
     TiXmlNode *mapnode=0;
 
-    std::string value; //имя тега
-    std::stringstream stream; //содердимое (текст) тега
+    std::string value;
+    std::stringstream stream;
 
-    bool hasGridMem=false, hasGrid=false, hasHeight=false, hasWidth=false, hasSTX=false, hasSTY=false, hasFINX=false, hasFINY=false, hasSTH=false, hasFINH=false;
+    bool hasGridMem=false, hasGrid=false, hasHeight=false, hasWidth=false, hasSTX=false, hasSTY=false, hasFINX=false, hasFINY=false;
 
     TiXmlDocument doc(FileName);
 
@@ -94,28 +77,18 @@ bool Map::getMap(const char* FileName)
         return false;
     }
 
-    //Идеология инициализация "карты":
-    //Перебираем последовательно внутренности тега "карта"
-    //Если впервые попалось корректное значение старта (х, у), финиша (х, у), высоты и ширины - запонимаем их
-    //Если старт-х, финиш-х попадаются раньше ширины - ошибка!
-    //Если старт-у, финиш-у попадаются раньше высоты - ошибка!
-    //Если попадаются дубликаты (теги повторяются), после того как мы уже запомнили значения, - выводим Warning
-    //т.е. ВСЕГДА запоминается и используется ТОЛЬКО первое (корректно определенное) значение старта (х, у), финиша (х, у), высоты, ширины
-
-
-    mapnode=map->FirstChild();//перебираем внутренности тега "карта"
+    mapnode=map->FirstChild();
     while(mapnode)
     {
-            element=mapnode->ToElement(); //очередной элемент (тег)
-            value=mapnode->Value(); // имя тега
-            std::transform(value.begin(), value.end(), value.begin(), ::tolower); //"хорошее имя тега"
+            element=mapnode->ToElement();
+            value=mapnode->Value();
+            std::transform(value.begin(), value.end(), value.begin(), ::tolower);
 
-            stream.str(""); //очищаем
-            stream.clear(); //буфер
-            stream << element->GetText(); //и кладем в него содержимое (текст) тега (внимание: в теге "грид" нет текста - там вложенные теги, там будет NULL. Так что беспокоится не надо, всё под контролем!
+            stream.str("");
+            stream.clear();
+            stream << element->GetText();
 
-            //1. Заготовка под грид.
-            if(!hasGridMem && hasHeight && hasWidth) //в какой-то момент оказалось, что есть уже высота и ширина - создаем грид
+            if(!hasGridMem && hasHeight && hasWidth)
             {
                     Grid=new int*[height];
                     for(int i=0; i<height;i++)
@@ -123,15 +96,14 @@ bool Map::getMap(const char* FileName)
                     hasGridMem=true;
             }
 
-            //2. Высота
             if(value==CNS_TAG_HEIGHT)
             {
-                if (hasHeight) //Дубль. Высота уже была.
+                if (hasHeight)
                 {
                    std::cout << "Warning! Duplicate '"<< CNS_TAG_HEIGHT <<"' encountered." << std::endl;
                    std::cout << "Only first value of '"<< CNS_TAG_HEIGHT <<"' =" << height <<"will be used." << std::endl;
                 }
-                else//Высоты еще не было. Или была - но плохая. В общем - пока не инициализировали...
+                else
                 {
                     if (!((stream >> height) && (height > 0)))//sstream >> height преобразовывает строку в число (int).
                                                        //Если не может преобазовать (строка косячная) - значение height остается предыдущим.
@@ -146,18 +118,14 @@ bool Map::getMap(const char* FileName)
                         hasHeight=true;
                 }
             }
-            //Закончили с высотой
-
-
-            //3. Ширина
             else if(value==CNS_TAG_WIDTH)
             {
-                if (hasWidth) //Дубль. Ширина уже была.
+                if (hasWidth)
                 {
                    std::cout << "Warning! Duplicate '"<< CNS_TAG_WIDTH <<"' encountered." << std::endl;
                    std::cout << "Only first value of '"<< CNS_TAG_WIDTH <<"' =" << width <<"will be used." << std::endl;
                 }
-                else //Ширины еще не было. Или была - но плохая. В общем - пока не инициализировали...
+                else
                 {
                     if (!((stream >> width) && (width > 0)))
                     {
@@ -170,24 +138,20 @@ bool Map::getMap(const char* FileName)
                         hasWidth=true;
                 }
             }
-            //Закончили с шириной
-
-
-            //4. Старт-Икс
             else if(value==CNS_TAG_STX)
             {
-                if (!hasWidth) //Тег "старт-х" встретился раньше чем "ширина" - ошибка!
+                if (!hasWidth)
                 {
                     std::cout << "Error! '" << CNS_TAG_STX <<"' tag encountered before '" << CNS_TAG_WIDTH << "' tag." << std::endl;
                     return false;
                 }
 
-                if (hasSTX) //Дубль. Старт-ИКС уже был.
+                if (hasSTX)
                 {
                    std::cout << "Warning! Duplicate '"<< CNS_TAG_STX <<"' encountered." << std::endl;
                    std::cout << "Only first value of '"<< CNS_TAG_STX <<"' =" << start_j <<"will be used." << std::endl;
                 }
-                else //Старт-ИКС еще не встречался (или встречался, но корявый), в общем - надо пытаться инициализировать
+                else
                 {
                     if (!(stream >> start_j && start_j>=0 && start_j<width))
                     {
@@ -199,24 +163,20 @@ bool Map::getMap(const char* FileName)
                         hasSTX=true;
                 }
             }
-            //Закончили со Cтарт-Икс
-
-
-            //5. Старт-Игрек
             else if(value==CNS_TAG_STY)
             {
-                if (!hasHeight) //Тег "старт-y" встретился раньше чем "высота" - ошибка!
+                if (!hasHeight)
                 {
                     std::cout << "Error! '" << CNS_TAG_STY <<"' tag encountered before '" << CNS_TAG_HEIGHT << "' tag." << std::endl;
                     return false;
                 }
 
-                if (hasSTY) //Дубль. Старт-ИКС уже был.
+                if (hasSTY)
                 {
                    std::cout << "Warning! Duplicate '"<< CNS_TAG_STY <<"' encountered." << std::endl;
                    std::cout << "Only first value of '"<< CNS_TAG_STY <<"' =" << start_i <<"will be used." << std::endl;
                 }
-                else //Старт-Игрек еще не встречался (или встречался, но корявый), в общем - надо пытаться инициализировать
+                else
                 {
                     if (!(stream >> start_i && start_i>=0 && start_i<height))
                     {
@@ -228,23 +188,20 @@ bool Map::getMap(const char* FileName)
                         hasSTY=true;
                 }
             }
-            //Закончили со Cтарт-Игрек
-
-            //6. Финиш-Икс
             else if(value==CNS_TAG_FINX)
             {
-                if (!hasWidth) //Тег "финиш-икс" встретился раньше чем "ширина" - ошибка!
+                if (!hasWidth)
                 {
                     std::cout << "Error! '" << CNS_TAG_FINX <<"' tag encountered before '" << CNS_TAG_WIDTH << "' tag." << std::endl;
                     return false;
                 }
 
-                if (hasFINX) //Дубль. финиш-икс уже был.
+                if (hasFINX)
                 {
                    std::cout << "Warning! Duplicate '"<< CNS_TAG_FINX <<"' encountered." << std::endl;
                    std::cout << "Only first value of '"<< CNS_TAG_FINX <<"' =" << goal_j <<"will be used." << std::endl;
                 }
-                else //Финиш-икс еще не встречался (или встречался, но корявый), в общем - надо пытаться инициализировать
+                else
                 {
                     if (!(stream >> goal_j && goal_j>=0 && goal_j<width))
                     {
@@ -256,24 +213,20 @@ bool Map::getMap(const char* FileName)
                         hasFINX=true;
                 }
             }
-            //Закончили со Финиш-Икс
-
-
-            //7. Финиш-Игрек
             else if(value==CNS_TAG_FINY)
             {
-                if (!hasHeight) //Тег "финиш-игрек" встретился раньше чем "высота" - ошибка!
+                if (!hasHeight)
                 {
                     std::cout << "Error! '" << CNS_TAG_FINY <<"' tag encountered before '" << CNS_TAG_HEIGHT << "' tag." << std::endl;
                     return false;
                 }
 
-                if (hasFINY) //Дубль. Финиш-игрек уже был.
+                if (hasFINY)
                 {
                    std::cout << "Warning! Duplicate '"<< CNS_TAG_FINY <<"' encountered." << std::endl;
                    std::cout << "Only first value of '"<< CNS_TAG_FINY <<"' =" << goal_i <<"will be used." << std::endl;
                 }
-                else //Финиш-Игрек еще не встречался (или встречался, но корявый), в общем - надо пытаться инициализировать
+                else
                 {
                     if (!(stream >> goal_i && goal_i>=0 && goal_i<height))
                     {
@@ -285,9 +238,6 @@ bool Map::getMap(const char* FileName)
                         hasFINY=true;
                 }
             }
-            //Закончили со Финиш-Игрек
-
-            //8. Грид
             else if(value==CNS_TAG_GRID)
             {
                 hasGrid=true;
@@ -296,7 +246,7 @@ bool Map::getMap(const char* FileName)
                     std::cout << "Error! No '" << CNS_TAG_WIDTH <<"' tag or '" << CNS_TAG_HEIGHT << "' tag before '" << CNS_TAG_GRID << "'tag encountered!" << std::endl;
                     return false;
                 }
-                element=mapnode->FirstChildElement(); //переходим от "грида" к "строкам грида"
+                element=mapnode->FirstChildElement();
                 while (grid_i<height)
                 {
                     if(!element)
@@ -306,10 +256,14 @@ bool Map::getMap(const char* FileName)
                         return false;
                     }
                     std::string str = element -> GetText();
-                    std::vector<std::string> elems=split(str,' ');
+                    std::vector<std::string> elems;
+                    std::stringstream ss(str);
+                    std::string item;
+                    while (std::getline(ss, item, ' '))
+                        elems.push_back(item);
                     rowiter = grid_j = 0;
                     int val;
-                    if(elems.size()>0)//проверка на то, что тег row не пустой
+                    if(elems.size()>0)
                       for(grid_j=0; grid_j<width; grid_j++)
                       {
                           if(grid_j==elems.size())
@@ -334,24 +288,24 @@ bool Map::getMap(const char* FileName)
             mapnode=map->IterateChildren(mapnode);
 
     }
-    //Закончили с гридом
-    if(!hasGrid)//проверка на то, что в файле нет тега grid
+    //some additional checks
+    if(!hasGrid)
     {
         std::cout<<"Error! There is no tag 'grid' in xml-file!\n";
         return false;
     }
-    if(!(hasFINX && hasFINY && hasSTX && hasSTY))//Проверка на то, что так и не удалось считать нормальный старт и финиш.
+    if(!(hasFINX && hasFINY && hasSTX && hasSTY))
         return false;
 
-    if (Grid[start_i][start_j] == CN_GC_OBS)
+    if (Grid[start_i][start_j] != CN_GC_NOOBS)
     {
-        std::cout << "Error! Start cell is not traversable (cell's value is" << CN_GC_OBS << ")!" << std::endl;
+        std::cout << "Error! Start cell is not traversable (cell's value is" << Grid[start_i][start_j] << ")!" << std::endl;
         return false;
     }
 
-    if (Grid[goal_i][goal_j] == CN_GC_OBS)
+    if (Grid[goal_i][goal_j] != CN_GC_NOOBS)
     {
-        std::cout << "Error! Goal cell is not traversable (cell's value is" << CN_GC_OBS << ")!" << std::endl;
+        std::cout << "Error! Goal cell is not traversable (cell's value is" << Grid[goal_i][goal_j] << ")!" << std::endl;
         return false;
     }
 

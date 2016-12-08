@@ -1,13 +1,11 @@
 #ifndef ASTAR_H
 #define ASTAR_H
-#include "gl_const.h"
 #include "isearch.h"
-#include "ilogger.h"
 
 class Astar : public ISearch
 {
     public:
-        Astar(double weight, int BT, int SL, int i);
+        Astar(double weight, bool BT, int SL);
         ~Astar();
 
     protected:
