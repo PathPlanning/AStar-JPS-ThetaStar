@@ -8,7 +8,7 @@ TARGET = maps/ASearch
 CONFIG   += console
 CONFIG   -= app_bundle
 TEMPLATE = app
-QMAKE_CXXFLAGS += -std=c++0x
+QMAKE_CXXFLAGS += -std=c++11 -O2 -Wall -Wextra
 
 win32 {
 QMAKE_LFLAGS += -static -static-libgcc -static-libstdc++

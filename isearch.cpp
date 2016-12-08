@@ -113,6 +113,7 @@ Node ISearch::findMin(int size)
                             {
                                 min=*open[i].List.begin();
                             }
+                            break;
                         }
                         case CN_SP_BT_GMIN:
                         {
@@ -120,6 +121,7 @@ Node ISearch::findMin(int size)
                             {
                                 min=*open[i].List.begin();
                             }
+                            break;
                         }
                     }
                 }

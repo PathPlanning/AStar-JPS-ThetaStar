@@ -54,6 +54,7 @@ void Astar::addOpen(Node newNode)
                             pos=iter;
                             posFound=true;
                         }
+                        break;
                     }
                     case CN_SP_BT_GMIN:
                     {
@@ -62,6 +63,7 @@ void Astar::addOpen(Node newNode)
                             pos=iter;
                             posFound=true;
                         }
+                        break;
                     }
                 }
             }
