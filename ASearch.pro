@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-TARGET = maps/ASearch
+TARGET = ASearch
 CONFIG   += console
 CONFIG   -= app_bundle
 TEMPLATE = app

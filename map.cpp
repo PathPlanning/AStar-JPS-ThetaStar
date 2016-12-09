@@ -77,6 +77,11 @@ bool Map::getMap(const char* FileName)
     mapnode=map->FirstChild();
     while(mapnode)
     {
+        if (mapnode->Type() == TiXmlNode::TINYXML_COMMENT)
+        {
+            mapnode=map->IterateChildren(mapnode);
+            continue;
+        }
         element=mapnode->ToElement();
         value=mapnode->Value();
         std::transform(value.begin(), value.end(), value.begin(), ::tolower);
