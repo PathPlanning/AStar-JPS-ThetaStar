@@ -9,10 +9,9 @@ class Theta: public Astar
         ~Theta(void);
 
 
-    private:
+    protected:
 
-        bool lineOfSight(int x1, int y1, int x0, int y0, const Map &map);
-        bool grid(int i, int j, const Map &map);
+        bool lineOfSight(int y1, int x1, int y0, int x0, const Map &map);
         Node resetParent(Node current, Node parent, const Map &map, const EnvironmentOptions &options);
         void makePrimaryPath(Node curNode);
         void makeSecondaryPath(const Map &map,Node curNode);

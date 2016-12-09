@@ -64,9 +64,10 @@ SearchResult ISearch::startSearch(ILogger *Logger, const Map &map, const Environ
         }
         std::list<Node> successors=findSuccessors(curNode,map,options);
         std::list<Node>::iterator it=successors.begin();
+        auto parent=&(close.find(curNode.i*map.width+curNode.j)->second);
         while(it!=successors.end())
         {
-            it->parent = &(close.find(curNode.i*map.width+curNode.j)->second);
+            it->parent = parent;
             it->H = computeHFromCellToCell(it->i,it->j,map.goal_i,map.goal_j,options);
             *it=resetParent(*it, *it->parent, map, options);
             it->F = it->g + hweight * it->H;
@@ -74,7 +75,6 @@ SearchResult ISearch::startSearch(ILogger *Logger, const Map &map, const Environ
             it++;
         }
         Logger->writeToLogOpenClose(open,close,map.height);
-
     }
     sresult.pathfound = false;
     sresult.nodescreated = closeSize + openSize;

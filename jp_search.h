@@ -1,11 +1,11 @@
 #ifndef JP_SEARCH_H
 #define JP_SEARCH_H
-#include "astar.h"
+#include "theta.h"
 
-class JP_Search:public Astar
+class JP_Search:public Theta
 {
 public:
-    JP_Search(float hweight, bool breakingties, int sizelimit):Astar(hweight,breakingties,sizelimit){}
+    JP_Search(float hweight, bool breakingties, int sizelimit):Theta(hweight,breakingties,sizelimit){}
     ~JP_Search();
 
 private:

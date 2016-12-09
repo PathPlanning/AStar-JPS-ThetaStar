@@ -28,7 +28,7 @@ void JP_Search::findJP(int move_i, int move_j, Node curNode, const Map &map, std
             return;
         if(map.goal_i == curNode.i && map.goal_j == curNode.j)
             findOK = true;
-        if(options.allowdiagonal == CN_SP_AD_TRUE)//check whethe diagonal moves is allowed
+        if(options.allowdiagonal == CN_SP_AD_TRUE)//check whether diagonal moves is allowed
         {
             if(move_i == 0 && map.CellOnGrid(curNode.i, curNode.j+move_j))//straight move along j
             {
@@ -75,10 +75,8 @@ void JP_Search::findJP(int move_i, int move_j, Node curNode, const Map &map, std
         }
     }
     if(findOK && close.find(curNode.i*map.width+curNode.j)==close.end())
-    {
         successors.push_front(curNode);
-        return;
-    }
+    return;
 }
 
 bool JP_Search::findNeighbors(int move_i, int move_j, Node curNode, const Map &map)
@@ -214,23 +212,23 @@ void JP_Search::makeSecondaryPath(const Map &map, Node curNode)
     lppath.List.push_back(*forpath);
     while(forpath2!=&*hppath.List.end())
     {
-          x0=forpath->i;
-          y0=forpath->j;
-          x1=forpath2->i;
-          y1=forpath2->j;
-          dx= x1-x0;
-          dy= y1-y0;
-          f=0;
+        x0=forpath->i;
+        y0=forpath->j;
+        x1=forpath2->i;
+        y1=forpath2->j;
+        dx= x1-x0;
+        dy= y1-y0;
+        f=0;
 
-          if (dy<0) {dy=-dy; s_y=-1;}
-          else s_y=1;
+        if (dy<0) {dy=-dy; s_y=-1;}
+        else s_y=1;
 
-          if (dx<0) {dx=-dx; s_x=-1;}
-          else s_x=1;
+        if (dx<0) {dx=-dx; s_x=-1;}
+        else s_x=1;
 
-          if (dx>=dy)
-          {
-          while (x0!=x1)
+        if (dx>=dy)
+        {
+            while (x0!=x1)
             {
                 f+=dy;
                 if (f>=dx)
@@ -242,26 +240,26 @@ void JP_Search::makeSecondaryPath(const Map &map, Node curNode)
                 inpath.i=x0;
                 inpath.j=y0;
                 lppath.List.push_back(inpath);
-             }
-           }
-           else
-           while (y0!=y1)
-           {
-            f+=dx;
-            if (f>=dy)
+            }
+        }
+        else
+            while (y0!=y1)
             {
-                x0+=s_x;
-                f-=dy;
-            }
+                f+=dx;
+                if (f>=dy)
+                {
+                    x0+=s_x;
+                    f-=dy;
+                }
 
-            y0+=s_y;
-            inpath.i=x0;
-            inpath.j=y0;
-            lppath.List.push_back(inpath);
+                y0+=s_y;
+                inpath.i=x0;
+                inpath.j=y0;
+                lppath.List.push_back(inpath);
             }
-              forpath=forpath2;
-              iter++;
-              forpath2=&*iter;
+        forpath=forpath2;
+        iter++;
+        forpath2=&*iter;
     }
     sresult.lppath = &lppath;
 }
@@ -272,61 +270,10 @@ Node JP_Search::resetParent(Node current, Node parent, const Map &map, const Env
         return current;
     if ((parent.i == map.start_i && parent.j == map.start_j) || (current.i == map.start_i && current.j == map.start_j))
         return current;
-
-    bool ok=true;
-    int x1=parent.parent->i;
-    int y1=parent.parent->j;
-    int x0=current.i;
-    int y0=current.j;
-
-    int dx= x1-x0;
-    int dy= y1-y0;
-    int s_x, s_y;
-    int f=0;
-
-    if (dy<0) {dy=-dy; s_y=-1;}
-    else s_y=1;
-    if (dx<0) {dx=-dx; s_x=-1;}
-    else s_x=1;
-    if (dx>=dy)
+    if (lineOfSight(parent.parent->i, parent.parent->j, current.i, current.j, map))
     {
-        while (x0!=x1)
-        {
-            f+=dy;
-            if (f>=dx)
-            {
-                if(map.getValue(x0+(s_x-1)/2,y0+(s_y-1)/2)) ok=false;
-                y0+=s_y;
-                f-=dx;
-            }
-            if (f!=0 && map.getValue(x0+(s_x-1)/2,y0+(s_y-1)/2)) ok=false;
-            if (dy==0 && map.getValue(x0+(s_x-1)/2,y0) && map.getValue(x0+(s_x-1)/2,y0-1)) ok=false;
-
-            x0+=s_x;
-        }
-    }
-    else
-        while (y0!=y1)
-        {
-            f+=dx;
-            if (f>=dy)
-            {
-                if(map.getValue(x0+(s_x-1)/2,y0+(s_y-1)/2)) ok=false;
-
-                x0+=s_x;
-                f-=dy;
-            }
-
-            if (f!=0 && map.getValue(x0+(s_x-1)/2,y0+(s_y-1)/2)) ok=false;
-            if (dx==0 && map.getValue(x0,y0+(s_y-1)/2) && map.getValue(x0-1,y0+(s_y-1)/2)) ok=false;
-            y0+=s_y;
-        }
-
-    if (ok)
-    {
-        current.g=parent.parent->g +computeHFromCellToCell(parent.parent->i,parent.parent->j, current.i, current.j, options);
-        current.parent=parent.parent;
-        return current;
+        current.g = parent.parent->g + computeHFromCellToCell(parent.parent->i, parent.parent->j, current.i, current.j, options);
+        current.parent = parent.parent;
     }
     return current;
 }
