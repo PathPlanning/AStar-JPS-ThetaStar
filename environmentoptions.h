@@ -5,14 +5,12 @@
 class EnvironmentOptions
 {
 public:
-    EnvironmentOptions(int MT, bool AS, double LC, double DC, bool AD, bool RP);
+    EnvironmentOptions(bool AS, bool AD, bool CC, int MT=CN_SP_MT_EUCL);
     EnvironmentOptions();
-    int     metrictype;     //Can be chosen Euclidean, Manhattan and Diagonal distance
+    int     metrictype;     //Can be chosen Euclidean, Manhattan, Chebyshev and Diagonal distance
     bool    allowsqueeze;   //Option that allows to move throught "bottleneck"
-    double  linecost;       //Cost of straight moves
-    double  diagonalcost;   //Cost of diagonal moves
     bool    allowdiagonal;  //Option that allows to make diagonal moves
-    bool    useresetparent; //Option that allows JPS use resetParent function like in Theta*
+    bool    cutcorners;     //Option that allows to make diagonal moves, when one adjacent cell is untraversable
 
 };
 

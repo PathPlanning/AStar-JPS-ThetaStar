@@ -20,11 +20,11 @@ class Map
         bool CellIsObstacle(int i, int j) const;
         int  getValue(int i, int j) const;
 
-    public:
-        int**   Grid;
         int     height, width;
-        int     start_i, start_j, start_h;
-        int     goal_i, goal_j, goal_h;
+        int     start_i, start_j;
+        int     goal_i, goal_j;
+        double  cellSize;
+        int**   Grid;
 };
 
 #endif

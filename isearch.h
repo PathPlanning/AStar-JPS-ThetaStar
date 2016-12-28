@@ -24,7 +24,7 @@ class ISearch
         virtual std::list<Node> findSuccessors(Node curNode, const Map &map, const EnvironmentOptions &options);
         virtual void makePrimaryPath(Node curNode);//Makes path using back pointers
         virtual void makeSecondaryPath(const Map &map, Node curNode);//Makes another type of path(sections or points)
-        virtual Node resetParent(Node current, Node parent, const Map &map, const EnvironmentOptions &options) {return current;}//Function for Theta* and modification of JPS
+        virtual Node resetParent(Node current, Node parent, const Map &map, const EnvironmentOptions &options) {return current;}//Function for Theta*
         virtual bool stopCriterion();
 
         SearchResult                    sresult;

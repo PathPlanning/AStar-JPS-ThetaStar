@@ -4,24 +4,20 @@ ISearch::ISearch()
 {
     hweight = 1;
     breakingties = CN_SP_BT_GMAX;
-    sizelimit = CN_SP_SL_NOLIMIT;
-    open=NULL;
-    openSize=0;
+    open = NULL;
+    openSize = 0;
 }
 
 ISearch::~ISearch(void)
 {
-    if(open)
-    {
-        delete []open;
-    }
+    if(open) delete []open;
 }
 
 double ISearch::MoveCost(int start_i, int start_j, int fin_i, int fin_j, const EnvironmentOptions &options)
 {
     if((start_i-fin_i) != 0 && (start_j-fin_j) != 0)
-        return options.diagonalcost;
-    return options.linecost;
+        return sqrt(2);
+    return 1;
 }
 
 bool ISearch::stopCriterion()
@@ -74,8 +70,9 @@ SearchResult ISearch::startSearch(ILogger *Logger, const Map &map, const Environ
             addOpen(*it);
             it++;
         }
-        Logger->writeToLogOpenClose(open,close,map.height);
+        Logger->writeToLogOpenClose(open,close,map.height,false);
     }
+    Logger->writeToLogOpenClose(open,close,map.height,true);
     sresult.pathfound = false;
     sresult.nodescreated = closeSize + openSize;
     sresult.numberofsteps = closeSize;
@@ -88,7 +85,7 @@ SearchResult ISearch::startSearch(ILogger *Logger, const Map &map, const Environ
     }
     //stop the timer now because making path using back pointers is a part of the algorithm
     end = std::chrono::system_clock::now();
-    sresult.time = static_cast<double>(std::chrono::duration_cast<std::chrono::microseconds>(end - start).count())/1000000;
+    sresult.time = static_cast<double>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count())/1000000000;
     if(pathfound)
         makeSecondaryPath(map, curNode);
     return sresult;
@@ -144,16 +141,24 @@ std::list<Node> ISearch::findSuccessors(Node curNode, const Map &map, const Envi
         {
             if((i != 0 || j != 0) && map.CellOnGrid(curNode.i+i,curNode.j+j) && (map.CellIsTraversable(curNode.i+i,curNode.j+j)))
             {
-                if(options.allowdiagonal == CN_SP_AD_FALSE)
+                if(options.allowdiagonal == false)
+                {
                     if(i != 0 && j != 0)
                         continue;
-                if(options.allowsqueeze == CN_SP_AS_FALSE)
+                }
+                else if(options.cutcorners == false)
+                {
+                    if(i != 0 && j != 0)
+                        if(map.CellIsObstacle(curNode.i,curNode.j+j) || map.CellIsObstacle(curNode.i+i,curNode.j))
+                            continue;
+                }
+                else if(options.allowsqueeze == false)
                 {
                     if(i != 0 && j != 0)
                         if(map.CellIsObstacle(curNode.i,curNode.j+j) && map.CellIsObstacle(curNode.i+i,curNode.j))
                             continue;
                 }
-                if(close.find((curNode.i+i)*map.width+curNode.j+j)==close.end())
+                if(close.find((curNode.i+i)*map.width+curNode.j+j) == close.end())
                 {
                     newNode.i = curNode.i+i;
                     newNode.j = curNode.j+j;
@@ -197,7 +202,7 @@ void ISearch::makeSecondaryPath(const Map &map, Node curNode)
         if((iter->i - nextI) != moveI || (iter->j - nextJ) != moveJ)
             hppath.List.push_back(*(--iter));
         else
-        iter--;
+            iter--;
     }
     sresult.hppath = &hppath;
 }

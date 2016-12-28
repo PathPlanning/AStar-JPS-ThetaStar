@@ -21,9 +21,10 @@ void Dijkstra::addOpen(Node newNode)
 
     pos = open[newNode.i].List.end();
 
-    if (open[newNode.i].List.size()==0)
+    if (open[newNode.i].List.empty())
     {
         open[newNode.i].List.push_back(newNode);
+        openSize++;
         return;
     }
 
@@ -50,10 +51,12 @@ void Dijkstra::addOpen(Node newNode)
                         return;
                 }
                 open[newNode.i].List.erase(iter);
+                openSize--;
                 break;
             }
         }
     }
-
+    openSize++;
     open[newNode.i].List.insert(pos,newNode);
+    return;
 }

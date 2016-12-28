@@ -5,7 +5,7 @@
 class Theta: public Astar
 {
     public:
-        Theta(float hweight, bool breakingties, int sizelimit):Astar(hweight,breakingties, sizelimit){}
+        Theta(float hweight, bool breakingties):Astar(hweight,breakingties){}
         ~Theta(void);
 
 

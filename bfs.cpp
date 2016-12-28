@@ -17,7 +17,7 @@ void BFS::addOpen(Node newNode)
 {
     std::list<Node>::iterator iter=open[newNode.i].List.begin();
 
-    while(iter != open[newNode.i].List.end() && ((newNode.i != iter->i)||(newNode.j != iter->j)))
+    while(iter != open[newNode.i].List.end() && ((newNode.j != iter->j)))
     {
         ++iter;
     }
@@ -27,10 +27,12 @@ void BFS::addOpen(Node newNode)
         if(iter->g>newNode.g)
         {
             open[newNode.i].List.erase(iter);
+            openSize--;
         }
         else
             return;
     }
-
+    openSize++;
     open[newNode.i].List.push_back(newNode);
+    return;
 }

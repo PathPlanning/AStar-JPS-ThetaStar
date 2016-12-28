@@ -6,11 +6,10 @@ Map::Map()
     width = -1;
     start_i = -1;
     start_j = -1;
-    start_h = -1;
     goal_i = -1;
     goal_j = -1;
-    goal_h = -1;
     Grid = NULL;
+    cellSize = 1;
 }
 
 Map::~Map()
@@ -48,7 +47,7 @@ bool Map::getMap(const char* FileName)
     std::string value;
     std::stringstream stream;
 
-    bool hasGridMem=false, hasGrid=false, hasHeight=false, hasWidth=false, hasSTX=false, hasSTY=false, hasFINX=false, hasFINY=false;
+    bool hasGridMem=false, hasGrid=false, hasHeight=false, hasWidth=false, hasSTX=false, hasSTY=false, hasFINX=false, hasFINY=false, hasCellSize=false;
 
     TiXmlDocument doc(FileName);
 
@@ -107,10 +106,7 @@ bool Map::getMap(const char* FileName)
             }
             else
             {
-                if (!((stream >> height) && (height > 0)))//sstream >> height преобразовывает строку в число (int).
-                    //Если не может преобазовать (строка косячная) - значение height остается предыдущим.
-                    //То есть - по умолчанию (из конструктора) 0.
-                    //То же самое касается и других преобразований ниже...
+                if (!((stream >> height) && (height > 0)))
                 {
                     std::cout << "Warning! Invalid value of '"<< CNS_TAG_HEIGHT <<"' tag encountered (or could not convert to integer)." << std::endl;
                     std::cout << "Value of '"<< CNS_TAG_HEIGHT <<"' tag should be an integer >=0" << std::endl;
@@ -132,12 +128,31 @@ bool Map::getMap(const char* FileName)
                 if (!((stream >> width) && (width > 0)))
                 {
                     std::cout << "Warning! Invalid value of '"<< CNS_TAG_WIDTH <<"' tag encountered (or could not convert to integer)." << std::endl;
-                    std::cout << "Value of '"<< CNS_TAG_WIDTH <<"' tag should be an integer AND >=0" << std::endl;
+                    std::cout << "Value of '"<< CNS_TAG_WIDTH <<"' tag should be an integer AND >0" << std::endl;
                     std::cout << "Continue reading XML and hope correct value of '"<< CNS_TAG_WIDTH <<"' tag will be encountered later..." << std::endl;
 
                 }
                 else
                     hasWidth=true;
+            }
+        }
+        else if(value==CNS_TAG_CELLSIZE)
+        {
+            if (hasCellSize)
+            {
+                std::cout << "Warning! Duplicate '"<< CNS_TAG_CELLSIZE <<"' encountered." << std::endl;
+                std::cout << "Only first value of '"<< CNS_TAG_CELLSIZE <<"' =" << cellSize <<"will be used." << std::endl;
+            }
+            else
+            {
+                if (!((stream >> cellSize) && (cellSize > 0)))
+                {
+                    std::cout << "Warning! Invalid value of '"<< CNS_TAG_CELLSIZE <<"' tag encountered (or could not convert to double)." << std::endl;
+                    std::cout << "Value of '"<< CNS_TAG_CELLSIZE<<"' tag should be double AND >0. By default it is defined to '1'" << std::endl;
+                    std::cout << "Continue reading XML and hope correct value of '"<< CNS_TAG_CELLSIZE <<"' tag will be encountered later..." << std::endl;
+                }
+                else
+                    hasCellSize=true;
             }
         }
         else if(value==CNS_TAG_STX)

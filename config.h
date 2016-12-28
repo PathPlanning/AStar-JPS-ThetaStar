@@ -14,7 +14,6 @@ class Config
         Config();
         Config(const Config& orig);
         ~Config();
-
         bool getConfig(const char *FileName);
 
     public:

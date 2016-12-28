@@ -11,7 +11,7 @@ void JP_Search::findJP(int move_i, int move_j, Node curNode, const Map &map, std
     {
         if(map.CellOnGrid(curNode.i+move_i, curNode.j+move_j))
         {
-            if(options.allowsqueeze == CN_SP_AS_FALSE)
+            if(options.allowsqueeze == false)
                 if(move_i != 0 && move_j != 0)
                     if(!map.CellIsTraversable(curNode.i, curNode.j+move_j) && !map.CellIsTraversable(curNode.i+move_i, curNode.j))
                         return;
@@ -28,7 +28,7 @@ void JP_Search::findJP(int move_i, int move_j, Node curNode, const Map &map, std
             return;
         if(map.goal_i == curNode.i && map.goal_j == curNode.j)
             findOK = true;
-        if(options.allowdiagonal == CN_SP_AD_TRUE)//check whether diagonal moves is allowed
+        if(options.allowdiagonal == true)//check whether diagonal moves is allowed
         {
             if(move_i == 0 && map.CellOnGrid(curNode.i, curNode.j+move_j))//straight move along j
             {
@@ -126,7 +126,7 @@ std::list<Node> JP_Search::findSuccessors(Node curNode, const Map &map, const En
     int move_i = 0, move_j = 0;
     std::list<Node> successors;
 
-    if(options.allowdiagonal == CN_SP_AD_TRUE)
+    if(options.allowdiagonal == true)
     {
         if(curNode.i == map.start_i && curNode.j == map.start_j)//if curNode is the start location, then look for jump points in all directions
             for(int n=-1; n<=1; n++)
@@ -264,7 +264,7 @@ void JP_Search::makeSecondaryPath(const Map &map, Node curNode)
     sresult.lppath = &lppath;
 }
 
-Node JP_Search::resetParent(Node current, Node parent, const Map &map, const EnvironmentOptions &options )
+/*Node JP_Search::resetParent(Node current, Node parent, const Map &map, const EnvironmentOptions &options )
 {
     if(options.useresetparent==false)
         return current;
@@ -276,4 +276,4 @@ Node JP_Search::resetParent(Node current, Node parent, const Map &map, const Env
         current.parent = parent.parent;
     }
     return current;
-}
+}*/

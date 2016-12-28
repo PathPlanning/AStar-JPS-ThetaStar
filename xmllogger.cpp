@@ -7,7 +7,7 @@ XmlLogger::~XmlLogger()
 
 bool XmlLogger::getLog(const char* FileName, const std::string* LogParams)
 {
-    if (loglevel == CN_SP_LL_NOLOG) return true;
+    if (loglevel == CN_LP_LEVEL_NOPE_WORD) return true;
 
     doc = new TiXmlDocument(FileName);
     if (!doc->LoadFile())
@@ -16,7 +16,7 @@ bool XmlLogger::getLog(const char* FileName, const std::string* LogParams)
         return false;
     }
 
-    if (LogParams[CN_LP_LPATH] == "" && LogParams[CN_LP_LNAME] == "")
+    if (LogParams[CN_LP_PATH] == "" && LogParams[CN_LP_NAME] == "")
     {
         std::string str;
         str.append(FileName);
@@ -27,7 +27,7 @@ bool XmlLogger::getLog(const char* FileName, const std::string* LogParams)
             str.append("_log");
         LogFileName.append(str);
     }
-    else if (LogParams[CN_LP_LPATH] == "")
+    else if (LogParams[CN_LP_PATH] == "")
     {
         LogFileName.append(FileName);
         std::string::iterator it = LogFileName.end();
@@ -35,12 +35,12 @@ bool XmlLogger::getLog(const char* FileName, const std::string* LogParams)
             it--;
         it++;
         LogFileName.erase(it, LogFileName.end());
-        LogFileName.append(LogParams[CN_LP_LNAME]);
+        LogFileName.append(LogParams[CN_LP_NAME]);
     }
-    else if (LogParams[CN_LP_LNAME] == "")
+    else if (LogParams[CN_LP_NAME] == "")
     {
-        LogFileName.append(LogParams[CN_LP_LPATH]);
-        if (*(--LogParams[CN_LP_LPATH].end())!= '\\') LogFileName.append("\\");
+        LogFileName.append(LogParams[CN_LP_PATH]);
+        if (*(--LogParams[CN_LP_PATH].end())!= '\\') LogFileName.append("\\");
         std::string lfn;
         lfn.append(FileName);
         size_t found= lfn.find_last_of("\\");
@@ -54,9 +54,9 @@ bool XmlLogger::getLog(const char* FileName, const std::string* LogParams)
     }
     else
     {
-        LogFileName.append(LogParams[CN_LP_LPATH]);
-        if (*(--LogParams[CN_LP_LPATH].end())!= '\\') LogFileName.append("\\");
-        LogFileName.append(LogParams[CN_LP_LNAME]);
+        LogFileName.append(LogParams[CN_LP_PATH]);
+        if (*(--LogParams[CN_LP_PATH].end())!= '\\') LogFileName.append("\\");
+        LogFileName.append(LogParams[CN_LP_NAME]);
     }
 
     TiXmlElement *log, *root = doc->FirstChildElement(CNS_TAG_ROOT);
@@ -72,7 +72,7 @@ bool XmlLogger::getLog(const char* FileName, const std::string* LogParams)
 
     root = ( root -> LastChild() ) -> ToElement();
 
-    if (loglevel == CN_SP_LL_SMALLLOG || loglevel == CN_SP_LL_FULLLOG)
+    if (loglevel != CN_LP_LEVEL_NOPE_WORD)
     {
         log = new TiXmlElement(CNS_TAG_MAPFN);
         log -> LinkEndChild(new TiXmlText(FileName));
@@ -80,18 +80,20 @@ bool XmlLogger::getLog(const char* FileName, const std::string* LogParams)
 
         log = new TiXmlElement(CNS_TAG_SUM);
         root -> InsertEndChild(*log);
+        if(loglevel != CN_LP_LEVEL_TINY_WORD)
+        {
+            log = new TiXmlElement(CNS_TAG_PATH);
+            root -> InsertEndChild(*log);
 
-        log = new TiXmlElement(CNS_TAG_PATH);
-        root -> InsertEndChild(*log);
+            log = new TiXmlElement(CNS_TAG_LPLEVEL);
+            root -> InsertEndChild(*log);
 
-        log = new TiXmlElement(CNS_TAG_LPLEVEL);
-        root -> InsertEndChild(*log);
-
-        log = new TiXmlElement(CNS_TAG_HPLEVEL);
-        root -> InsertEndChild(*log);
+            log = new TiXmlElement(CNS_TAG_HPLEVEL);
+            root -> InsertEndChild(*log);
+        }
     }
 
-    if (loglevel == CN_SP_LL_FULLLOG)
+    if (loglevel == CN_LP_LEVEL_FULL_WORD || loglevel == CN_LP_LEVEL_MEDIUM_WORD)
     {
         log = new TiXmlElement(CNS_TAG_LOWLEVEL);
         root -> InsertEndChild(*log);
@@ -102,13 +104,13 @@ bool XmlLogger::getLog(const char* FileName, const std::string* LogParams)
 
 void XmlLogger::saveLog()
 {
-    if (loglevel == CN_SP_LL_NOLOG) return;
+    if (loglevel == CN_LP_LEVEL_NOPE_WORD) return;
     doc->SaveFile(LogFileName.c_str());
 }
 
 void XmlLogger::writeToLogMap(const Map& map, const NodeList& path)
 {
-    if (loglevel == CN_SP_LL_NOLOG) return;
+    if (loglevel == CN_LP_LEVEL_NOPE_WORD || loglevel == CN_LP_LEVEL_TINY_WORD) return;
 
     int iterate = 0;
     std::stringstream stream;
@@ -146,10 +148,11 @@ void XmlLogger::writeToLogMap(const Map& map, const NodeList& path)
     }
 }
 
-void XmlLogger::writeToLogOpenClose(const NodeList *open, const std::unordered_map<int, Node>& close, int size)
+void XmlLogger::writeToLogOpenClose(const NodeList *open, const std::unordered_map<int, Node>& close, int size, bool last)
 {
 
-    if (loglevel == CN_SP_LL_NOLOG || loglevel == CN_SP_LL_SMALLLOG) return;
+    if(loglevel == CN_LP_LEVEL_NOPE_WORD || loglevel == CN_LP_LEVEL_SHORT_WORD || loglevel == CN_LP_LEVEL_TINY_WORD) return;
+    if(loglevel == CN_LP_LEVEL_MEDIUM_WORD && !last) return;
     int iterate = 0;
     TiXmlElement *element = new TiXmlElement(CNS_TAG_STEP);
     TiXmlNode *child = 0, *lowlevel = doc->FirstChild(CNS_TAG_ROOT);
@@ -240,7 +243,7 @@ void XmlLogger::writeToLogOpenClose(const NodeList *open, const std::unordered_m
 
 void XmlLogger::writeToLogPath(const NodeList& path)
 {
-    if (loglevel == CN_SP_LL_NOLOG || path.List.size()==0) return;
+    if (loglevel == CN_LP_LEVEL_NOPE_WORD || loglevel == CN_LP_LEVEL_TINY_WORD || path.List.size()==0) return;
     int iterate = 0;
     TiXmlElement *element;
     TiXmlNode *lplevel = doc->FirstChild(CNS_TAG_ROOT);
@@ -258,7 +261,7 @@ void XmlLogger::writeToLogPath(const NodeList& path)
 
 void XmlLogger::writeToLogHPpath(const NodeList& hppath)
 {
-    if (loglevel == CN_SP_LL_NOLOG || hppath.List.size()==0) return;
+    if (loglevel == CN_LP_LEVEL_NOPE_WORD || loglevel == CN_LP_LEVEL_TINY_WORD || hppath.List.size()==0) return;
     int partnumber = 0;
     TiXmlElement *part;
     TiXmlElement *hplevel = doc->FirstChildElement(CNS_TAG_ROOT);
@@ -282,9 +285,9 @@ void XmlLogger::writeToLogHPpath(const NodeList& hppath)
     }
 }
 
-void XmlLogger::writeToLogSummary(unsigned int numberofsteps, unsigned int nodescreated, float length, double time)
+void XmlLogger::writeToLogSummary(unsigned int numberofsteps, unsigned int nodescreated, float length, double time, double cellSize)
 {
-    if (loglevel == 0) return;
+    if (loglevel == CN_LP_LEVEL_NOPE_WORD) return;
 
     std::stringstream str;
     str << time;
@@ -295,12 +298,13 @@ void XmlLogger::writeToLogSummary(unsigned int numberofsteps, unsigned int nodes
     element -> SetAttribute(CNS_TAG_ATTR_NUMOFSTEPS, numberofsteps);
     element -> SetAttribute(CNS_TAG_ATTR_NODESCREATED, nodescreated);
     element -> SetDoubleAttribute(CNS_TAG_ATTR_LENGTH, length);
+    element -> SetDoubleAttribute(CNS_TAG_ATTR_LENGTH_SCALED, length*cellSize);
     element -> SetAttribute(CNS_TAG_ATTR_TIME, str.str().c_str());
 }
 
 void XmlLogger::writeToLogNotFound()
 {
-    if (loglevel == CN_SP_LL_NOLOG) return;
+    if (loglevel == CN_LP_LEVEL_NOPE_WORD) return;
     TiXmlNode *node = doc->FirstChild(CNS_TAG_ROOT) -> FirstChild(CNS_TAG_LOG) -> FirstChild(CNS_TAG_PATH);
     node -> LinkEndChild(new TiXmlText("Path NOT found!"));
 }
