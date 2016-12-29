@@ -212,6 +212,13 @@ bool Config::getConfig(const char* FileName)
                 std::cout << "Value of '"<< CNS_TAG_CC <<"' was defined to default - false" << std::endl;
                 SearchParams[CN_SP_CC] = 0;
             }
+            else
+            {
+                if(check=="1" || check=="true")
+                    SearchParams[CN_SP_CC] = 1;
+                else
+                    SearchParams[CN_SP_CC] = 0;
+            }
         }
         if(SearchParams[CN_SP_CC] == 0)
         {
@@ -238,6 +245,13 @@ bool Config::getConfig(const char* FileName)
                     std::cout << "Warning! Value of '" << CNS_TAG_AS <<"' is not correctly specified." << std::endl;
                     std::cout << "Value of '"<< CNS_TAG_AS <<"' was defined to default - false." << std::endl;
                     SearchParams[CN_SP_AS] = 0;
+                }
+                else
+                {
+                    if(check=="1" || check=="true")
+                        SearchParams[CN_SP_AS] = 1;
+                    else
+                        SearchParams[CN_SP_AS] = 0;
                 }
             }
         }
