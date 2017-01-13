@@ -42,7 +42,6 @@ SearchResult ISearch::startSearch(ILogger *Logger, const Map &map, const Environ
     curNode.H = computeHFromCellToCell(curNode.i,curNode.j, map.goal_i, map.goal_j,options);
     curNode.F = hweight * curNode.H;
     curNode.parent = 0;
-
     addOpen(curNode);
     int closeSize=0;
     bool pathfound=false;

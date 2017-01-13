@@ -27,7 +27,7 @@ void JP_Search::findJP(int move_i, int move_j, Node curNode, const Map &map, std
             {
                 curNode.i += move_i;
                 curNode.j += move_j;
-                curNode.g = curNode.g+MoveCost(curNode.i, curNode.j, curNode.i+move_i, curNode.j+move_j, options);
+                curNode.g = curNode.g + MoveCost(curNode.i, curNode.j, curNode.i+move_i, curNode.j+move_j, options);
             }
             else
                 return;
@@ -40,25 +40,25 @@ void JP_Search::findJP(int move_i, int move_j, Node curNode, const Map &map, std
         {
             if(options.cutcorners == true)
             {
-                if(move_i == 0 && map.CellOnGrid(curNode.i, curNode.j+move_j))
+                if(move_i == 0)//straight move along j
                 {
-                    if(map.CellOnGrid(curNode.i+1, curNode.j))
+                    if(map.CellOnGrid(curNode.i+1, curNode.j+move_j))
                         if(map.CellIsTraversable(curNode.i+1, curNode.j+move_j) && map.CellIsObstacle(curNode.i+1, curNode.j))
                             findOK = true;
-                    if(map.CellOnGrid(curNode.i-1,curNode.j))
+                    if(map.CellOnGrid(curNode.i-1,curNode.j+move_j))
                         if(map.CellIsTraversable(curNode.i-1, curNode.j+move_j) && map.CellIsObstacle(curNode.i-1, curNode.j))
                             findOK = true;
                 }
-                if(move_j == 0 && map.CellOnGrid(curNode.i+move_i, curNode.j))
+                else if(move_j == 0)//straight move along i
                 {
-                    if(map.CellOnGrid(curNode.i, curNode.j+1))
+                    if(map.CellOnGrid(curNode.i+move_i, curNode.j+1))
                         if(map.CellIsTraversable(curNode.i+move_i, curNode.j+1) && map.CellIsObstacle(curNode.i, curNode.j+1))
                             findOK = true;
-                    if(map.CellOnGrid(curNode.i, curNode.j-1))
+                    if(map.CellOnGrid(curNode.i+move_i, curNode.j-1))
                         if(map.CellIsTraversable(curNode.i+move_i, curNode.j-1) && map.CellIsObstacle(curNode.i, curNode.j-1))
                             findOK = true;
                 }
-                if(move_i != 0 && move_j != 0)
+                else//diagonal move
                 {
                     if(map.CellOnGrid(curNode.i-move_i, curNode.j+move_j))
                         if(map.CellIsObstacle(curNode.i-move_i, curNode.j) && map.CellIsTraversable(curNode.i-move_i, curNode.j+move_j))
@@ -76,7 +76,7 @@ void JP_Search::findJP(int move_i, int move_j, Node curNode, const Map &map, std
             }
             else
             {
-                if(move_i == 0 && map.CellOnGrid(curNode.i, curNode.j+move_j))//straight move along j
+                if(move_i == 0)//straight move along j
                 {
                     if(map.CellOnGrid(curNode.i+1, curNode.j))
                         if(map.CellIsTraversable(curNode.i+1, curNode.j) && map.CellIsObstacle(curNode.i+1, curNode.j-move_j))//check forced neighbor
@@ -85,7 +85,7 @@ void JP_Search::findJP(int move_i, int move_j, Node curNode, const Map &map, std
                         if(map.CellIsTraversable(curNode.i-1, curNode.j) && map.CellIsObstacle(curNode.i-1, curNode.j-move_j))
                             findOK = true;
                 }
-                if(move_j == 0 && map.CellOnGrid(curNode.i+move_i, curNode.j))//straight move along i
+                else if(move_j == 0)//straight move along i
                 {
                     if(map.CellOnGrid(curNode.i, curNode.j+1))
                         if(map.CellIsTraversable(curNode.i, curNode.j+1) && map.CellIsObstacle(curNode.i-move_i, curNode.j+1))
@@ -94,7 +94,7 @@ void JP_Search::findJP(int move_i, int move_j, Node curNode, const Map &map, std
                         if(map.CellIsTraversable(curNode.i, curNode.j-1) && map.CellIsObstacle(curNode.i-move_i, curNode.j-1))
                             findOK = true;
                 }
-                if(move_i != 0 && move_j != 0)//diagonal move
+                else//diagonal move
                 {
                     if(findNeighbors(move_i, 0, curNode, map, options))//looking for forced neighbor along i
                         findOK = true;

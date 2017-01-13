@@ -8,14 +8,12 @@ class Theta: public Astar
         Theta(float hweight, bool breakingties):Astar(hweight,breakingties){}
         ~Theta(void);
 
-
     protected:
 
-        bool lineOfSight(int y1, int x1, int y0, int x0, const Map &map);
+        bool lineOfSight(int y1, int x1, int y0, int x0, const Map &map, bool cutcorners);
         Node resetParent(Node current, Node parent, const Map &map, const EnvironmentOptions &options);
         void makePrimaryPath(Node curNode);
         void makeSecondaryPath(const Map &map,Node curNode);
-
 
 };
 
