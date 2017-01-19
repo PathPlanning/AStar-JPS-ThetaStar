@@ -28,13 +28,13 @@ Input and Output files
   * **\<cellsize>** - optional tag that defines the size of one cell. It needs for counting scaled length of the path.
   * **\<title>**, **\<URL>**, **\<coordinates>**, etc - some optional information about the map.
 >- Mandatory tag <b>\<algorithm></b>. It describes the parameters of the algorithm.
-  * **\<searchtype>** - mandatory tag that defines the algorithm. Possible values - "astar", "theta", "jp_search", "bfs", "dijkstra".
+  * **\<searchtype>** - mandatory tag that defines the planner algorithm. Possible values - "astar", "theta", "jp_search", "bfs", "dijkstra".
   * **\<metrictype>** - defines the type of metric for heuristic function. Possible values - "euclidean", "diagonal", "manhattan", "chebyshev". Default value is "euclidean".
   * **\<hweight>** - defines the weight of heuristic function. Default value is "1".
   * **\<breakingties>** - defines the priority in OPEN list when nodes have the equal F-values. Possible values - "g-min", "g-max". Default value is "g-max".
-  * **\<allowdiagonal>** - boolean tag that defines the possibility to make diagonal moves. Ignores this tag if algorithm "theta" is chosen. Default value is "true".
-  * **\<cutcorners>** - boolean tag that defines the possibilty to make diagonal moves when one adjacent cell is untraversable. Ignores this tag if diagonal moves are disallowed. Default value is "false".
-  * **\<allowsquuze>** - boolean tag that defines the possibility to make diagonal moves when both adjacent cells are untraversable. Ignores this tag if cutting corners is disallowed. Default value is "false".
+  * **\<allowdiagonal>** - boolean tag that defines the possibility to make diagonal moves. Algorithm ignores this tag if "theta" planner is chosen. Default value is "true".
+  * **\<cutcorners>** - boolean tag that defines the possibilty to make diagonal moves when one adjacent cell is untraversable. Algorithm ignores this tag if diagonal moves are disallowed. Default value is "false".
+  * **\<allowsquize>** - boolean tag that defines the possibility to make diagonal moves when both adjacent cells are untraversable. Algorithm ignores this tag if cutting corners is disallowed. Default value is "false".
 >- Optional tag <b>\<options></b>. It describes the format of output file.
   * **\<loglevel>** - defines the completness of log-file. Default value is "1". Possible values:
     * "0" or "none" - log-file is not created at all.
