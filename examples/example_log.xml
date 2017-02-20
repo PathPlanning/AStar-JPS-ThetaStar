@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<root>
+    <map>
+        <width>25</width>
+        <height>25</height>
+        <cellsize>24</cellsize>
+        <startx>12</startx>
+        <starty>20</starty>
+        <finishx>12</finishx>
+        <finishy>7</finishy>
+        <grid>
+            <row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</row>
+            <row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</row>
+            <row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</row>
+            <row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</row>
+            <row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</row>
+            <row>0 0 0 0 1 1 1 1 1 1 0 0 0 0 0 0 1 1 1 1 1 1 1 0 0</row>
+            <row>0 0 0 0 1 1 1 1 1 1 0 0 0 0 0 0 1 1 1 1 1 1 1 0 0</row>
+            <row>0 0 0 0 1 1 1 1 1 1 0 0 0 0 0 0 1 1 1 1 1 1 1 0 0</row>
+            <row>0 0 0 0 1 1 1 1 1 1 0 0 0 0 0 0 1 1 1 1 1 1 1 0 0</row>
+            <row>0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0</row>
+            <row>0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0</row>
+            <row>0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0</row>
+            <row>0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0</row>
+            <row>0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0</row>
+            <row>0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0</row>
+            <row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</row>
+            <row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</row>
+            <row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</row>
+            <row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</row>
+            <row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</row>
+            <row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</row>
+            <row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</row>
+            <row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</row>
+            <row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</row>
+            <row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</row>
+        </grid>
+    </map>
+    <algorithm>
+        <searchtype>astar</searchtype>
+        <metrictype>diagonal</metrictype>
+        <breakingties>g-max</breakingties>
+        <weight>1</weight>
+        <allowdiagonal>true</allowdiagonal>
+        <cutcorners>false</cutcorners>
+        <allowsqueeze>false</allowsqueeze>
+    </algorithm>
+    <options>
+        <loglevel>1</loglevel>
+        <logpath />
+        <logfilename />
+    </options>
+    <log>
+        <mapfilename>D:\GitHub\build-ASearch-Desktop_Qt_5_3_MinGW_32bit-Release\release\example.xml</mapfilename>
+        <summary numberofsteps="373" nodescreated="415" length="30.5563" length_scaled="733.352" time="0.000993" />
+        <path>
+            <row number="0">0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 </row>
+            <row number="1">0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 </row>
+            <row number="2">0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 </row>
+            <row number="3">0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 </row>
+            <row number="4">0 0 0 * * * * * * * * 0 0 0 0 0 0 0 0 0 0 0 0 0 0 </row>
+            <row number="5">0 0 0 * 1 1 1 1 1 1 0 * 0 0 0 0 1 1 1 1 1 1 1 0 0 </row>
+            <row number="6">0 0 0 * 1 1 1 1 1 1 0 0 * 0 0 0 1 1 1 1 1 1 1 0 0 </row>
+            <row number="7">0 0 0 * 1 1 1 1 1 1 0 0 * 0 0 0 1 1 1 1 1 1 1 0 0 </row>
+            <row number="8">0 0 0 * 1 1 1 1 1 1 0 0 0 0 0 0 1 1 1 1 1 1 1 0 0 </row>
+            <row number="9">0 0 0 * 0 0 0 0 0 0 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 </row>
+            <row number="10">0 0 0 0 * 0 0 0 0 0 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 </row>
+            <row number="11">0 0 0 0 0 * 0 0 0 0 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 </row>
+            <row number="12">0 0 0 0 0 0 * 0 0 0 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 </row>
+            <row number="13">0 0 0 0 0 0 0 * 0 0 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 </row>
+            <row number="14">0 0 0 0 0 0 0 0 * 0 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 </row>
+            <row number="15">0 0 0 0 0 0 0 0 0 * 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 </row>
+            <row number="16">0 0 0 0 0 0 0 0 0 0 * 0 0 0 0 0 0 0 0 0 0 0 0 0 0 </row>
+            <row number="17">0 0 0 0 0 0 0 0 0 0 0 * 0 0 0 0 0 0 0 0 0 0 0 0 0 </row>
+            <row number="18">0 0 0 0 0 0 0 0 0 0 0 0 * 0 0 0 0 0 0 0 0 0 0 0 0 </row>
+            <row number="19">0 0 0 0 0 0 0 0 0 0 0 0 * 0 0 0 0 0 0 0 0 0 0 0 0 </row>
+            <row number="20">0 0 0 0 0 0 0 0 0 0 0 0 * 0 0 0 0 0 0 0 0 0 0 0 0 </row>
+            <row number="21">0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 </row>
+            <row number="22">0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 </row>
+            <row number="23">0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 </row>
+            <row number="24">0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 </row>
+        </path>
+        <lplevel>
+            <node x="12" y="20" number="0" />
+            <node x="12" y="19" number="1" />
+            <node x="12" y="18" number="2" />
+            <node x="11" y="17" number="3" />
+            <node x="10" y="16" number="4" />
+            <node x="9" y="15" number="5" />
+            <node x="8" y="14" number="6" />
+            <node x="7" y="13" number="7" />
+            <node x="6" y="12" number="8" />
+            <node x="5" y="11" number="9" />
+            <node x="4" y="10" number="10" />
+            <node x="3" y="9" number="11" />
+            <node x="3" y="8" number="12" />
+            <node x="3" y="7" number="13" />
+            <node x="3" y="6" number="14" />
+            <node x="3" y="5" number="15" />
+            <node x="3" y="4" number="16" />
+            <node x="4" y="4" number="17" />
+            <node x="5" y="4" number="18" />
+            <node x="6" y="4" number="19" />
+            <node x="7" y="4" number="20" />
+            <node x="8" y="4" number="21" />
+            <node x="9" y="4" number="22" />
+            <node x="10" y="4" number="23" />
+            <node x="11" y="5" number="24" />
+            <node x="12" y="6" number="25" />
+            <node x="12" y="7" number="26" />
+        </lplevel>
+        <hplevel>
+            <section number="0" start.x="12" start.y="20" finish.x="12" finish.y="18" length="2" />
+            <section number="1" start.x="12" start.y="18" finish.x="3" finish.y="9" length="12.7279" />
+            <section number="2" start.x="3" start.y="9" finish.x="3" finish.y="4" length="5" />
+            <section number="3" start.x="3" start.y="4" finish.x="10" finish.y="4" length="7" />
+            <section number="4" start.x="10" start.y="4" finish.x="12" finish.y="6" length="2.82843" />
+            <section number="5" start.x="12" start.y="6" finish.x="12" finish.y="7" length="1" />
+        </hplevel>
+    </log>
+</root>
