@@ -7,6 +7,7 @@
 #include <math.h>
 #include <limits>
 #include <chrono>
+#include <unordered_set>
 
 class ISearch
 {
@@ -16,6 +17,7 @@ class ISearch
 
         SearchResult startSearch(ILogger *Logger, const Map &Map, const EnvironmentOptions &options);
         Node findMin(int size);
+        void deleteMin(const Node &minNode);
         double MoveCost(int start_i, int start_j, int fin_i, int fin_j, const EnvironmentOptions &options);
 
     protected:
@@ -30,7 +32,8 @@ class ISearch
         SearchResult                    sresult;
         NodeList                        lppath, hppath;
         std::unordered_map<int,Node>    close;
-        NodeList                        *open;
+        std::unordered_set<Node> *open;
+        std::vector<Node> openMinimums;
         int                             openSize;
         int                             sizelimit;//max size of OPEN list //TODO:remove it
         float                           hweight;//weight of h-value

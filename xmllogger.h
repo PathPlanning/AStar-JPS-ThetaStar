@@ -17,7 +17,7 @@ public:
 
     void writeToLogMap(const Map &Map, const NodeList &path);
 
-    void writeToLogOpenClose(const NodeList *open, const std::unordered_map<int, Node> &close, int size, bool last);
+    void writeToLogOpenClose(const std::unordered_set<Node> *open, const std::unordered_map<int, Node> &close, int size, bool last);
 
     void writeToLogPath(const NodeList &path);
 

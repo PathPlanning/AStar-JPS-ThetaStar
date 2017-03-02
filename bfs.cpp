@@ -1,38 +1,33 @@
 #include "bfs.h"
 
-BFS::BFS()
-{
+BFS::BFS() {
+    breakingties = CN_SP_BT_GMIN;
 }
 
-BFS::~BFS()
-{
-}
-
-double BFS::computeHFromCellToCell(int start_i, int start_j, int fin_i, int fin_j, const EnvironmentOptions &options)
-{
+double BFS::computeHFromCellToCell(int start_i, int start_j, int fin_i, int fin_j, const EnvironmentOptions &options) {
     return 0;
 }
 
-void BFS::addOpen(Node newNode)
-{
-    std::list<Node>::iterator iter=open[newNode.i].List.begin();
+void BFS::addOpen(Node newNode) {
+    newNode.H = 0;
+    newNode.F = openSize + close.size();
 
-    while(iter != open[newNode.i].List.end() && ((newNode.j != iter->j)))
-    {
-        ++iter;
-    }
-
-    if(iter!=open[newNode.i].List.end())
-    {
-        if(iter->g>newNode.g)
-        {
-            open[newNode.i].List.erase(iter);
-            openSize--;
+    bool inserted = false;
+    size_t idx = newNode.i;
+    if (open[idx].find(newNode) != open[idx].end()) {
+        if (newNode.F < open[idx].find(newNode)->F) {
+            open[idx].erase(newNode);
+            open[idx].insert(newNode);
+            inserted = true;
         }
-        else
-            return;
+    } else {
+        open[idx].insert(newNode);
+        inserted = true;
+        ++openSize;
     }
-    openSize++;
-    open[newNode.i].List.push_back(newNode);
-    return;
+
+    if (inserted &&
+        (newNode.F < openMinimums[newNode.i].F || newNode.F == openMinimums[idx].F && newNode.g < openMinimums[idx].g)) {
+        openMinimums[idx] = newNode;
+    }
 }

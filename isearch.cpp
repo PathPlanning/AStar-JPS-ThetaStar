@@ -34,7 +34,8 @@ SearchResult ISearch::startSearch(ILogger *Logger, const Map &map, const Environ
 {
     std::chrono::time_point<std::chrono::system_clock> start, end;
     start = std::chrono::system_clock::now();
-    open=new NodeList[map.height];
+    open = new std::unordered_set<Node> [map.height];
+    openMinimums = std::vector<Node>(map.height, {0, 0, std::numeric_limits<double>::infinity(), 0, 0, nullptr});
     Node curNode;
     curNode.i = map.start_i;
     curNode.j = map.start_j;
@@ -50,7 +51,7 @@ SearchResult ISearch::startSearch(ILogger *Logger, const Map &map, const Environ
         curNode = findMin(map.height);
         close.insert({curNode.i*map.width+curNode.j,curNode});
         closeSize++;
-        open[curNode.i].List.pop_front();
+        deleteMin(curNode);
         openSize--;
         if(curNode.i==map.goal_i && curNode.j==map.goal_j)
         {
@@ -93,40 +94,31 @@ SearchResult ISearch::startSearch(ILogger *Logger, const Map &map, const Environ
 Node ISearch::findMin(int size)
 {
     Node min;
-    min.F=std::numeric_limits<double>::infinity();
-    for(int i=0; i<size; i++)
-    {
-        if(!open[i].List.empty())
-            if(open[i].List.begin()->F<=min.F)
-            {
-                if (open[i].List.begin()->F == min.F)
-                {
-                    switch(breakingties)
-                    {
-                        case CN_SP_BT_GMAX:
-                        {
-                            if (open[i].List.begin()->g >= min.g)
-                            {
-                                min=*open[i].List.begin();
-                            }
-                            break;
+    min.F = std::numeric_limits<double>::infinity();
+    for (int i = 0; i < size; i++) {
+        if (!open[i].empty() && openMinimums[i].F <= min.F) {
+            if (openMinimums[i].F == min.F) {
+                switch (breakingties) {
+                    default:
+                    case CN_SP_BT_GMAX: {
+                        if (openMinimums[i].g >= min.g) {
+                            min = openMinimums[i];
                         }
-                        case CN_SP_BT_GMIN:
-                        {
-                            if (open[i].List.begin()->g <= min.g)
-                            {
-                                min=*open[i].List.begin();
-                            }
-                            break;
+                        break;
+                    }
+                    case CN_SP_BT_GMIN: {
+                        if (openMinimums[i].g <= min.g) {
+                            min = openMinimums[i];
                         }
+                        break;
                     }
                 }
-                else
-                min=*open[i].List.begin();
             }
+            else
+                min = openMinimums[i];
+        }
     }
     return min;
-
 }
 
 
@@ -140,18 +132,18 @@ std::list<Node> ISearch::findSuccessors(Node curNode, const Map &map, const Envi
         {
             if((i != 0 || j != 0) && map.CellOnGrid(curNode.i+i,curNode.j+j) && (map.CellIsTraversable(curNode.i+i,curNode.j+j)))
             {
-                if(options.allowdiagonal == false)
+                if(!options.allowdiagonal)
                 {
                     if(i != 0 && j != 0)
                         continue;
                 }
-                else if(options.cutcorners == false)
+                else if(!options.cutcorners)
                 {
                     if(i != 0 && j != 0)
                         if(map.CellIsObstacle(curNode.i,curNode.j+j) || map.CellIsObstacle(curNode.i+i,curNode.j))
                             continue;
                 }
-                else if(options.allowsqueeze == false)
+                else if(!options.allowsqueeze)
                 {
                     if(i != 0 && j != 0)
                         if(map.CellIsObstacle(curNode.i,curNode.j+j) && map.CellIsObstacle(curNode.i+i,curNode.j))
@@ -192,16 +184,47 @@ void ISearch::makeSecondaryPath(const Map &map, Node curNode)
     {
         curI = iter->i;
         curJ = iter->j;
-        iter++;
+        ++iter;
         nextI = iter->i;
         nextJ = iter->j;
         moveI = nextI-curI;
         moveJ = nextJ-curJ;
-        iter++;
+        ++iter;
         if((iter->i - nextI) != moveI || (iter->j - nextJ) != moveJ)
             hppath.List.push_back(*(--iter));
         else
-            iter--;
+            --iter;
     }
     sresult.hppath = &hppath;
+}
+
+void ISearch::deleteMin(const Node &minNode) {
+    size_t idx = minNode.i;
+    open[idx].erase(minNode);
+    openMinimums[idx].F = std::numeric_limits<double>::infinity();
+    if (!open[idx].empty()) {
+        for (auto node : open[idx]) {
+            if (node.F <= openMinimums[idx].F) {
+                if (node.F == openMinimums[idx].F) {
+                    switch (breakingties) {
+                        default:
+                        case CN_SP_BT_GMAX: {
+                            if (node.g >= openMinimums[idx].g) {
+                                openMinimums[idx] = node;
+                            }
+                            break;
+                        }
+                        case CN_SP_BT_GMIN: {
+                            if (node.g <= openMinimums[idx].g) {
+                                openMinimums[idx] = node;
+                            }
+                            break;
+                        }
+                    }
+                } else {
+                    openMinimums[idx] = node;
+                }
+            }
+        }
+    }
 }

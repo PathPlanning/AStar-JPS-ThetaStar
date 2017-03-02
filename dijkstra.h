@@ -1,14 +1,12 @@
 #ifndef DIJKSTRA_H
 #define DIJKSTRA_H
-#include "isearch.h"
+#include "astar.h"
 
-class Dijkstra : public ISearch
+class Dijkstra : public Astar
 {
     public:
         Dijkstra();
-        ~Dijkstra(void);
 
-        void    addOpen(Node newNode);
         double  computeHFromCellToCell(int start_i, int start_j, int fin_i, int fin_j, const EnvironmentOptions &options);
 };
 #endif

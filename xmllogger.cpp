@@ -123,8 +123,7 @@ void XmlLogger::writeToLogMap(const Map &map, const NodeList &path) {
     }
 }
 
-void
-XmlLogger::writeToLogOpenClose(const NodeList *open, const std::unordered_map<int, Node> &close, int size, bool last) {
+void XmlLogger::writeToLogOpenClose(const std::unordered_set<Node> *open, const std::unordered_map<int, Node> &close, int size, bool last) {
 
     if (loglevel == CN_LP_LEVEL_NOPE_WORD || loglevel == CN_LP_LEVEL_SHORT_WORD ||
         loglevel == CN_LP_LEVEL_TINY_WORD)
@@ -148,13 +147,13 @@ XmlLogger::writeToLogOpenClose(const NodeList *open, const std::unordered_map<in
     min.F = -1;
     int exc = 0;
     for (int i = 0; i < size; ++i) {
-        if (open[i].List.size() > 0) {
-            if (open[i].List.begin()->F <= min.F || min.F == -1) {
-                if (open[i].List.begin()->F == min.F && open[i].List.begin()->g > min.g) {
-                    min = *open[i].List.begin();
+        if (open[i].size() > 0) {
+            if (open[i].begin()->F <= min.F || min.F == -1) {
+                if (open[i].begin()->F == min.F && open[i].begin()->g > min.g) {
+                    min = *open[i].begin();
                     exc = i;
-                } else if (open[i].List.begin()->F < min.F || min.F == -1) {
-                    min = *open[i].List.begin();
+                } else if (open[i].begin()->F < min.F || min.F == -1) {
+                    min = *open[i].begin();
                     exc = i;
                 }
             }
@@ -173,9 +172,9 @@ XmlLogger::writeToLogOpenClose(const NodeList *open, const std::unordered_map<in
         child->InsertEndChild(element);
     }
     for (int i = 0; i < size; ++i) {
-        if (open[i].List.size() > 0) {
-            for (std::list<Node>::const_iterator it = open[i].List.begin(); it != open[i].List.end(); ++it) {
-                if (it != open[exc].List.begin()) {
+        if (open[i].size() > 0) {
+            for (auto it = open[i].begin(); it != open[i].end(); ++it) {
+                if (it != open[exc].begin()) {
                     element = doc.NewElement(CNS_TAG_POINT);
                     element->SetAttribute(CNS_TAG_ATTR_X, it->j);
                     element->SetAttribute(CNS_TAG_ATTR_Y, it->i);

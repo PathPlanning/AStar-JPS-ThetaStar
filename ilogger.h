@@ -3,6 +3,7 @@
 #include "map.h"
 #include "list.h"
 #include <unordered_map>
+#include <unordered_set>
 
 class ILogger
 {
@@ -10,7 +11,7 @@ class ILogger
         virtual bool getLog(const char* FileName, const std::string* LogParams) = 0;
         virtual void saveLog() = 0;
         virtual void writeToLogMap(const Map& map, const NodeList& path) = 0;
-        virtual void writeToLogOpenClose(const NodeList *open, const std::unordered_map<int,Node>& close, int size, bool last) = 0;
+        virtual void writeToLogOpenClose(const std::unordered_set<Node> *open, const std::unordered_map<int,Node>& close, int size, bool last) = 0;
         virtual void writeToLogPath(const NodeList& path) = 0;
         virtual void writeToLogHPpath(const NodeList& path) = 0;
         virtual void writeToLogNotFound() = 0;

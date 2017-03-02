@@ -11,13 +11,13 @@ void JP_Search::findJP(int move_i, int move_j, Node curNode, const Map &map, std
     {
         if(map.CellOnGrid(curNode.i+move_i, curNode.j+move_j))
         {
-            if(options.cutcorners == false)
+            if(!options.cutcorners)
             {
                 if(move_i != 0 && move_j != 0)
                     if(!map.CellIsTraversable(curNode.i, curNode.j+move_j) || !map.CellIsTraversable(curNode.i+move_i, curNode.j))
                         return;
             }
-            else if(options.allowsqueeze == false)
+            else if(!options.allowsqueeze)
             {
                 if(move_i != 0 && move_j != 0)
                     if(!map.CellIsTraversable(curNode.i, curNode.j+move_j) && !map.CellIsTraversable(curNode.i+move_i, curNode.j))
@@ -36,9 +36,9 @@ void JP_Search::findJP(int move_i, int move_j, Node curNode, const Map &map, std
             return;
         if(map.goal_i == curNode.i && map.goal_j == curNode.j)
             findOK = true;
-        if(options.allowdiagonal == true)//check whether diagonal moves is allowed
+        if(options.allowdiagonal)//check whether diagonal moves is allowed
         {
-            if(options.cutcorners == true)
+            if(options.cutcorners)
             {
                 if(move_i == 0)//straight move along j
                 {
@@ -114,7 +114,7 @@ void JP_Search::findJP(int move_i, int move_j, Node curNode, const Map &map, std
                     findOK = true;
         }
     }
-    if(findOK && close.find(curNode.i*map.width+curNode.j)==close.end())
+    if(close.find(curNode.i*map.width+curNode.j)==close.end())
         successors.push_front(curNode);
     return;
 }
@@ -125,7 +125,7 @@ bool JP_Search::findNeighbors(int move_i, int move_j, Node curNode, const Map &m
     {
         if(map.goal_i == curNode.i && map.goal_j == curNode.j)//goal location is found
             return true;
-        if(options.cutcorners == true)
+        if(options.cutcorners)
         {
             if(move_i == 0 && map.CellOnGrid(curNode.i, curNode.j+move_j))
             {
@@ -190,7 +190,7 @@ std::list<Node> JP_Search::findSuccessors(Node curNode, const Map &map, const En
     int move_i = 0, move_j = 0;
     std::list<Node> successors;
 
-    if(options.allowdiagonal == true)
+    if(options.allowdiagonal)
     {
         if(curNode.i == map.start_i && curNode.j == map.start_j)//if curNode is the start location, then look for jump points in all directions
             for(int n=-1; n<=1; n++)
@@ -213,7 +213,7 @@ std::list<Node> JP_Search::findSuccessors(Node curNode, const Map &map, const En
                 findJP(0, move_j, curNode, map, successors, options);//the same check along j
             }
 
-            if(options.cutcorners==true)//original JPS, when cutcorners is allowed
+            if(options.cutcorners)//original JPS, when cutcorners is allowed
             {
                 if(move_i == 0)
                 {
