@@ -15,6 +15,7 @@ class ILogger
         virtual void writeToLogHPpath(const NodeList& path) = 0;
         virtual void writeToLogNotFound() = 0;
         virtual void writeToLogSummary(unsigned int numberofsteps, unsigned int nodescreated, float length, double time, double cellSize) = 0;
+        virtual ~ILogger() {};
     public:
         std::string loglevel;
 };
