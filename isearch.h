@@ -3,11 +3,8 @@
 #include "ilogger.h"
 #include "searchresult.h"
 #include "environmentoptions.h"
-#include <vector>
-#include <math.h>
-#include <limits>
-#include <chrono>
-#include <unordered_set>
+#include <list>
+#include <unordered_map>
 
 class ISearch
 {
@@ -16,12 +13,11 @@ class ISearch
         virtual ~ISearch(void);
 
         SearchResult startSearch(ILogger *Logger, const Map &Map, const EnvironmentOptions &options);
-        Node findMin(int size);
-        void deleteMin(const Node &minNode);
-        double MoveCost(int start_i, int start_j, int fin_i, int fin_j, const EnvironmentOptions &options);
 
     protected:
-        virtual void addOpen(Node newNode) = 0;
+        Node findMin(int size);
+        double MoveCost(int start_i, int start_j, int fin_i, int fin_j, const EnvironmentOptions &options);
+        virtual void addOpen(Node newNode);
         virtual double computeHFromCellToCell(int start_i, int start_j, int fin_i, int fin_j, const EnvironmentOptions &options) = 0;
         virtual std::list<Node> findSuccessors(Node curNode, const Map &map, const EnvironmentOptions &options);
         virtual void makePrimaryPath(Node curNode);//Makes path using back pointers
@@ -32,10 +28,8 @@ class ISearch
         SearchResult                    sresult;
         NodeList                        lppath, hppath;
         std::unordered_map<int,Node>    close;
-        std::unordered_set<Node> *open;
-        std::vector<Node> openMinimums;
+        std::list<Node> *open;
         int                             openSize;
-        int                             sizelimit;//max size of OPEN list //TODO:remove it
         float                           hweight;//weight of h-value
         bool                            breakingties;//flag that sets the priority of nodes in addOpen function when their F-values is equal
 

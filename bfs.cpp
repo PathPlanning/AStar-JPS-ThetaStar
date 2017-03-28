@@ -9,25 +9,24 @@ double BFS::computeHFromCellToCell(int start_i, int start_j, int fin_i, int fin_
 }
 
 void BFS::addOpen(Node newNode) {
-    newNode.H = 0;
-    newNode.F = openSize + close.size();
+    std::list<Node>::iterator iter=open[newNode.i].begin();
 
-    bool inserted = false;
-    size_t idx = newNode.i;
-    if (open[idx].find(newNode) != open[idx].end()) {
-        if (newNode.F < open[idx].find(newNode)->F) {
-            open[idx].erase(newNode);
-            open[idx].insert(newNode);
-            inserted = true;
+    while(iter != open[newNode.i].end() && ((newNode.j != iter->j)))
+    {
+        ++iter;
+    }
+
+    if(iter!=open[newNode.i].end())
+    {
+        if(iter->g>newNode.g)
+        {
+            open[newNode.i].erase(iter);
+            openSize--;
         }
-    } else {
-        open[idx].insert(newNode);
-        inserted = true;
-        ++openSize;
+        else
+            return;
     }
-
-    if (inserted &&
-        (newNode.F < openMinimums[newNode.i].F || newNode.F == openMinimums[idx].F && newNode.g < openMinimums[idx].g)) {
-        openMinimums[idx] = newNode;
-    }
+    openSize++;
+    open[newNode.i].push_back(newNode);
+    return;
 }

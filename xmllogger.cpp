@@ -123,7 +123,7 @@ void XmlLogger::writeToLogMap(const Map &map, const NodeList &path) {
     }
 }
 
-void XmlLogger::writeToLogOpenClose(const std::unordered_set<Node> *open, const std::unordered_map<int, Node> &close, int size, bool last) {
+void XmlLogger::writeToLogOpenClose(const std::list<Node> *open, const std::unordered_map<int, Node> &close, int size, bool last) {
 
     if (loglevel == CN_LP_LEVEL_NOPE_WORD || loglevel == CN_LP_LEVEL_SHORT_WORD ||
         loglevel == CN_LP_LEVEL_TINY_WORD)
