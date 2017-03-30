@@ -4,24 +4,17 @@
 #include <limits>
 #include <chrono>
 
-ISearch::ISearch() {
+ISearch::ISearch()
+{
     hweight = 1;
     breakingties = CN_SP_BT_GMAX;
-    open = NULL;
     openSize = 0;
 }
 
-ISearch::~ISearch(void) {
-    if (open) delete[]open;
-}
+ISearch::~ISearch(void) {}
 
-double ISearch::MoveCost(int start_i, int start_j, int fin_i, int fin_j, const EnvironmentOptions &options) {
-    if ((start_i - fin_i) != 0 && (start_j - fin_j) != 0)
-        return sqrt(2);
-    return 1;
-}
-
-bool ISearch::stopCriterion() {
+bool ISearch::stopCriterion()
+{
     if (openSize == 0) {
         std::cout << "OPEN list is empty!" << std::endl;
         return true;
@@ -29,22 +22,23 @@ bool ISearch::stopCriterion() {
     return false;
 }
 
-SearchResult ISearch::startSearch(ILogger *Logger, const Map &map, const EnvironmentOptions &options) {
+SearchResult ISearch::startSearch(ILogger *Logger, const Map &map, const EnvironmentOptions &options)
+{
     std::chrono::time_point<std::chrono::system_clock> start, end;
     start = std::chrono::system_clock::now();
-    open = new std::list<Node>[map.height];
+    open.resize(map.height);
     Node curNode;
     curNode.i = map.start_i;
     curNode.j = map.start_j;
     curNode.g = 0;
     curNode.H = computeHFromCellToCell(curNode.i, curNode.j, map.goal_i, map.goal_j, options);
     curNode.F = hweight * curNode.H;
-    curNode.parent = 0;
+    curNode.parent = nullptr;
     addOpen(curNode);
     int closeSize = 0;
     bool pathfound = false;
     while (!stopCriterion()) {
-        curNode = findMin(map.height);
+        curNode = findMin();
         close.insert({curNode.i * map.width + curNode.j, curNode});
         closeSize++;
         open[curNode.i].pop_front();
@@ -64,104 +58,94 @@ SearchResult ISearch::startSearch(ILogger *Logger, const Map &map, const Environ
             addOpen(*it);
             it++;
         }
-        Logger->writeToLogOpenClose(open, close, map.height, false);
+        Logger->writeToLogOpenClose(open, close, false);
     }
-    Logger->writeToLogOpenClose(open, close, map.height, true);
+    Logger->writeToLogOpenClose(open, close, true);
     sresult.pathfound = false;
     sresult.nodescreated = closeSize + openSize;
     sresult.numberofsteps = closeSize;
     if (pathfound) {
         sresult.pathfound = true;
         makePrimaryPath(curNode);
-        sresult.hppath = &hppath;
         sresult.pathlength = curNode.g;
     }
-    //stop the timer now because making path using back pointers is a part of the algorithm
+    //Stop the timer now because making path using back pointers is a part of the algorithm
     end = std::chrono::system_clock::now();
-    sresult.time =
-            static_cast<double>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()) / 1000000000;
+    sresult.time = static_cast<double>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()) / 1000000000;
     if (pathfound)
-        makeSecondaryPath(map, curNode);
+        makeSecondaryPath();
+    sresult.hppath = &hppath; //Here is a constant pointer
+    sresult.lppath = &lppath;
     return sresult;
 }
 
-Node ISearch::findMin(int size) {
+Node ISearch::findMin()
+{
     Node min;
     min.F = std::numeric_limits<double>::infinity();
-    for (int i = 0; i < size; i++) {
-        if (!open[i].empty())
-            if (open[i].begin()->F <= min.F) {
-                if (open[i].begin()->F == min.F) {
-                    switch (breakingties) {
-                        case CN_SP_BT_GMAX: {
-                            if (open[i].begin()->g >= min.g) {
-                                min = *open[i].begin();
-                            }
-                            break;
-                        }
-                        case CN_SP_BT_GMIN: {
-                            if (open[i].begin()->g <= min.g) {
-                                min = *open[i].begin();
-                            }
-                            break;
-                        }
-                    }
-                } else
+    for (int i = 0; i < open.size(); i++)
+        if (!open[i].empty() && open[i].begin()->F <= min.F)
+            if (open[i].begin()->F == min.F){
+                if((breakingties == CN_SP_BT_GMAX && open[i].begin()->g >= min.g) ||
+                   (breakingties == CN_SP_BT_GMIN && open[i].begin()->g <= min.g))
                     min = *open[i].begin();
             }
-    }
+            else
+                min = *open[i].begin();
     return min;
 }
 
-std::list<Node> ISearch::findSuccessors(Node curNode, const Map &map, const EnvironmentOptions &options) {
+std::list<Node> ISearch::findSuccessors(Node curNode, const Map &map, const EnvironmentOptions &options)
+{
     Node newNode;
     std::list<Node> successors;
-    for (int i = -1; i <= +1; i++) {
-        for (int j = -1; j <= +1; j++) {
+    for (int i = -1; i <= +1; i++)
+        for (int j = -1; j <= +1; j++)
             if ((i != 0 || j != 0) && map.CellOnGrid(curNode.i + i, curNode.j + j) &&
-                (map.CellIsTraversable(curNode.i + i, curNode.j + j))) {
-                if (!options.allowdiagonal) {
-                    if (i != 0 && j != 0)
+                    (map.CellIsTraversable(curNode.i + i, curNode.j + j))) {
+                if (i != 0 && j != 0) {
+                    if (!options.allowdiagonal)
                         continue;
-                } else if (!options.cutcorners) {
-                    if (i != 0 && j != 0)
+                    else if (!options.cutcorners) {
                         if (map.CellIsObstacle(curNode.i, curNode.j + j) ||
-                            map.CellIsObstacle(curNode.i + i, curNode.j))
+                                map.CellIsObstacle(curNode.i + i, curNode.j))
                             continue;
-                } else if (!options.allowsqueeze) {
-                    if (i != 0 && j != 0)
+                    }
+                    else if (!options.allowsqueeze) {
                         if (map.CellIsObstacle(curNode.i, curNode.j + j) &&
-                            map.CellIsObstacle(curNode.i + i, curNode.j))
+                                map.CellIsObstacle(curNode.i + i, curNode.j))
                             continue;
+                    }
                 }
                 if (close.find((curNode.i + i) * map.width + curNode.j + j) == close.end()) {
                     newNode.i = curNode.i + i;
                     newNode.j = curNode.j + j;
-                    newNode.g = curNode.g + MoveCost(curNode.i, curNode.j, curNode.i + i, curNode.j + j, options);
+                    if(i == 0 || j == 0)
+                        newNode.g = curNode.g + 1;
+                    else
+                        newNode.g = curNode.g + sqrt(2);
                     successors.push_front(newNode);
                 }
             }
-        }
-    }
     return successors;
 }
 
-void ISearch::makePrimaryPath(Node curNode) {
+void ISearch::makePrimaryPath(Node curNode)
+{
     Node current = curNode;
     while (current.parent) {
-        lppath.List.push_front(current);
+        lppath.push_front(current);
         current = *current.parent;
     }
-    lppath.List.push_front(current);
-    sresult.lppath = &lppath; //Here is a constant pointer
+    lppath.push_front(current);
 }
 
-void ISearch::makeSecondaryPath(const Map &map, Node curNode) {
-    std::list<Node>::const_iterator iter = lppath.List.begin();
+void ISearch::makeSecondaryPath()
+{
+    std::list<Node>::const_iterator iter = lppath.begin();
     int curI, curJ, nextI, nextJ, moveI, moveJ;
-    hppath.List.push_back(*iter);
-
-    while (iter != --lppath.List.end()) {
+    hppath.push_back(*iter);
+    while (iter != --lppath.end()) {
         curI = iter->i;
         curJ = iter->j;
         ++iter;
@@ -171,74 +155,43 @@ void ISearch::makeSecondaryPath(const Map &map, Node curNode) {
         moveJ = nextJ - curJ;
         ++iter;
         if ((iter->i - nextI) != moveI || (iter->j - nextJ) != moveJ)
-            hppath.List.push_back(*(--iter));
+            hppath.push_back(*(--iter));
         else
             --iter;
     }
-    sresult.hppath = &hppath;
 }
 
 void ISearch::addOpen(Node newNode)
 {
-    std::list<Node>::iterator iter,pos;
+    std::list<Node>::iterator iter, pos;
 
-    bool posFound=false;
-
-    pos = open[newNode.i].end();
-
-    if (open[newNode.i].size() == 0)
-    {
+    if (open[newNode.i].size() == 0) {
         open[newNode.i].push_back(newNode);
         openSize++;
         return;
     }
 
-    for(iter=open[newNode.i].begin(); iter != open[newNode.i].end(); ++iter)
-    {
-        if ((iter->F >= newNode.F) && (!posFound))
-        {
-            if (iter->F == newNode.F)
-            {
-                switch(breakingties)
-                {
-                    default:
-                    case CN_SP_BT_GMAX:
-                    {
-                        if (newNode.g >= iter->g)
-                        {
-                            pos=iter;
-                            posFound=true;
-                        }
-                        break;
-                    }
-                    case CN_SP_BT_GMIN:
-                    {
-                        if (newNode.g <= iter->g)
-                        {
-                            pos=iter;
-                            posFound=true;
-                        }
-                        break;
-                    }
+    pos = open[newNode.i].end();
+    bool posFound = false;
+    for (iter = open[newNode.i].begin(); iter != open[newNode.i].end(); ++iter) {
+        if (!posFound && iter->F >= newNode.F)
+            if (iter->F == newNode.F) {
+                if((breakingties == CN_SP_BT_GMAX && newNode.g >= iter->g) ||
+                   (breakingties == CN_SP_BT_GMIN && newNode.g <= iter->g)) {
+                    pos=iter;
+                    posFound=true;
                 }
             }
-            else
-            {
-                pos=iter;
-                posFound=true;
+            else {
+                pos = iter;
+                posFound = true;
             }
-        }
 
-        if (((iter->i) == newNode.i) && (iter->j)==newNode.j)
-        {
+        if (iter->j == newNode.j) {
             if (newNode.F >= iter->F)
-            {
                 return;
-            }
-            else
-            {
-                if(pos == iter)
-                {
+            else {
+                if (pos == iter) {
                     iter->F = newNode.F;
                     iter->g = newNode.g;
                     iter->parent = newNode.parent;
@@ -251,5 +204,5 @@ void ISearch::addOpen(Node newNode)
         }
     }
     openSize++;
-    open[newNode.i].insert(pos,newNode);
+    open[newNode.i].insert(pos, newNode);
 }

@@ -5,7 +5,7 @@
 class JP_Search:public Astar
 {
 public:
-    JP_Search(float hweight, bool breakingties):Astar(hweight,breakingties){}
+    JP_Search(float hweight, bool breakingties):Astar(hweight, breakingties){}
     ~JP_Search();
 
 private:
@@ -14,7 +14,7 @@ private:
     int  findDirection(int current_i, int parent_i);//determines the direction of motion
     std::list<Node> findSuccessors(Node curNode, const Map &map, const EnvironmentOptions &options);
     void makePrimaryPath(Node curNode);
-    void makeSecondaryPath(const Map &map,Node curNode);
+    void makeSecondaryPath();
 };
 
 #endif // JP_SEARCH_H

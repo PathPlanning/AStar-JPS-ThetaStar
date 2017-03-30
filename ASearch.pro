@@ -20,7 +20,6 @@ SOURCES += \
     isearch.cpp \
     mission.cpp \
     map.cpp \
-    list.cpp \
     dijkstra.cpp \
     config.cpp \
     bfs.cpp \
@@ -39,7 +38,6 @@ HEADERS += \
     mission.h \
     map.h \
     ilogger.h \
-    list.h \
     dijkstra.h \
     config.h \
     bfs.h \

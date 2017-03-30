@@ -5,15 +5,16 @@
 class Theta: public Astar
 {
     public:
-        Theta(float hweight, bool breakingties):Astar(hweight,breakingties){}
+        Theta(double hweight, bool breakingties):Astar(hweight, breakingties){}
         ~Theta(void);
 
     protected:
 
-        bool lineOfSight(int y1, int x1, int y0, int x0, const Map &map, bool cutcorners);
+        double distance(int i1, int j1, int i2, int j2);
+        bool lineOfSight(int i1, int j1, int i2, int j2, const Map &map, bool cutcorners);
         Node resetParent(Node current, Node parent, const Map &map, const EnvironmentOptions &options);
         void makePrimaryPath(Node curNode);
-        void makeSecondaryPath(const Map &map,Node curNode);
+        void makeSecondaryPath();
 
 };
 

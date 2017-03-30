@@ -1,13 +1,12 @@
 #ifndef XMLLOGGER_H
 #define	XMLLOGGER_H
-
 #include "tinyxml2.h"
 #include "ilogger.h"
 
 class XmlLogger : public ILogger {
 
 public:
-    XmlLogger() {}
+    XmlLogger(std::string loglevel):ILogger(loglevel){}
 
     virtual ~XmlLogger() {};
 
@@ -15,18 +14,17 @@ public:
 
     void saveLog();
 
-    void writeToLogMap(const Map &Map, const NodeList &path);
+    void writeToLogMap(const Map &Map, const std::list<Node> &path);
 
-    void writeToLogOpenClose(const std::list<Node> *open, const std::unordered_map<int, Node> &close, int size, bool last);
+    void writeToLogOpenClose(const std::vector<std::list<Node>> &open, const std::unordered_map<int, Node> &close, bool last);
 
-    void writeToLogPath(const NodeList &path);
+    void writeToLogPath(const std::list<Node> &path);
 
-    void writeToLogHPpath(const NodeList &hppath);
+    void writeToLogHPpath(const std::list<Node> &hppath);
 
     void writeToLogNotFound();
 
-    void writeToLogSummary(unsigned int numberofsteps, unsigned int nodescreated, float length, double time,
-                           double cellSize);
+    void writeToLogSummary(unsigned int numberofsteps, unsigned int nodescreated, float length, double time, double cellSize);
 
 private:
     std::string LogFileName;

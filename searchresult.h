@@ -1,14 +1,13 @@
 #ifndef SEARCHRESULT_H
 #define SEARCHRESULT_H
-
-#include "list.h"
-
+#include <list>
+#include "node.h"
 struct SearchResult
 {
         bool pathfound;
         float pathlength; //if path not found, then pathlength=0
-        const NodeList* lppath;
-        const NodeList* hppath;
+        const std::list<Node>* lppath;
+        const std::list<Node>* hppath;
         unsigned int nodescreated; //|OPEN| + |CLOSE| = total number of nodes saved in memory during search process.
         unsigned int numberofsteps; //number of iterations made by algorithm to find a solution
         double time;

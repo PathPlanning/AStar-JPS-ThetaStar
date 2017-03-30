@@ -6,39 +6,47 @@
 #include "xmllogger.h"
 #include "gl_const.h"
 
-Mission::Mission() {
-    logger = NULL;
-    search = NULL;
-    fileName = NULL;
+Mission::Mission()
+{
+    logger = nullptr;
+    search = nullptr;
+    fileName = nullptr;
 }
 
-Mission::Mission(const char *FileName) {
+Mission::Mission(const char *FileName)
+{
     fileName = FileName;
-    logger = NULL;
-    search = NULL;
+    logger = nullptr;
+    search = nullptr;
 }
 
-Mission::~Mission() {
-    if (logger != NULL) delete logger;
-    if (search != NULL) delete search;
+Mission::~Mission()
+{
+    if (logger)
+        delete logger;
+    if (search)
+        delete search;
 }
 
-bool Mission::getMap() {
+bool Mission::getMap()
+{
     return map.getMap(fileName);
 }
 
-bool Mission::getConfig() {
+bool Mission::getConfig()
+{
     return config.getConfig(fileName);
 }
 
-bool Mission::createLog() {
+bool Mission::createLog()
+{
     if (logger != NULL) delete logger;
-    logger = new XmlLogger();
-    logger->loglevel = config.LogParams[CN_LP_LEVEL];
+    logger = new XmlLogger(config.LogParams[CN_LP_LEVEL]);
     return logger->getLog(fileName, config.LogParams);
 }
 
-void Mission::createEnvironmentOptions() {
+void Mission::createEnvironmentOptions()
+{
     if (config.SearchParams[CN_SP_ST] == CN_SP_ST_BFS || config.SearchParams[CN_SP_ST] == CN_SP_ST_DIJK)
         options = EnvironmentOptions(config.SearchParams[CN_SP_AS], config.SearchParams[CN_SP_AD],
                                      config.SearchParams[CN_SP_CC]);
@@ -47,8 +55,10 @@ void Mission::createEnvironmentOptions() {
                                      config.SearchParams[CN_SP_CC], config.SearchParams[CN_SP_MT]);
 }
 
-void Mission::createSearch() {
-    if (search != NULL) delete search;
+void Mission::createSearch()
+{
+    if (search)
+        delete search;
     if (config.SearchParams[CN_SP_ST] == CN_SP_ST_BFS)
         search = new BFS();
     else if (config.SearchParams[CN_SP_ST] == CN_SP_ST_DIJK)
@@ -61,11 +71,13 @@ void Mission::createSearch() {
         search = new Theta(config.SearchParams[CN_SP_HW], config.SearchParams[CN_SP_BT]);
 }
 
-void Mission::startSearch() {
+void Mission::startSearch()
+{
     sr = search->startSearch(logger, map, options);
 }
 
-void Mission::printSearchResultsToConsole() {
+void Mission::printSearchResultsToConsole()
+{
     std::cout << "Path ";
     if (!sr.pathfound)
         std::cout << "NOT ";
@@ -79,7 +91,8 @@ void Mission::printSearchResultsToConsole() {
     std::cout << "time=" << sr.time << std::endl;
 }
 
-void Mission::saveSearchResultsToLog() {
+void Mission::saveSearchResultsToLog()
+{
     logger->writeToLogSummary(sr.numberofsteps, sr.nodescreated, sr.pathlength, sr.time, map.cellSize);
     if (sr.pathfound) {
         logger->writeToLogPath(*sr.lppath);
@@ -90,7 +103,8 @@ void Mission::saveSearchResultsToLog() {
     logger->saveLog();
 }
 
-const char *Mission::getAlgorithmName() {
+const char *Mission::getAlgorithmName()
+{
     if (config.SearchParams[CN_SP_ST] == CN_SP_ST_ASTAR)
         return CNS_SP_ST_ASTAR;
     else if (config.SearchParams[CN_SP_ST] == CN_SP_ST_DIJK)
