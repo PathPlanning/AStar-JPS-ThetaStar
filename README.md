@@ -32,7 +32,7 @@ Input and Output files
   * **\<metrictype>** - defines the type of metric for heuristic function. Possible values - "euclidean", "diagonal", "manhattan", "chebyshev". Default value is "euclidean".
   * **\<hweight>** - defines the weight of heuristic function. Default value is "1".
   * **\<breakingties>** - defines the priority in OPEN list when nodes have the equal F-values. Possible values - "g-min", "g-max". Default value is "g-max".
-  * **\<allowdiagonal>** - boolean tag that defines the possibility to make diagonal moves. Setting it to "false" restricts agent to make cardinal (horizonal, vertical) moves only. The tag is ignored if "theta" algorithm is in use (as Theta* allows moves into arbitrary direction). Default value is "true".
+  * **\<allowdiagonal>** - boolean tag that defines the possibility to make diagonal moves. Setting it to "false" restricts agent to make cardinal (horizonal, vertical) moves only. If Theta* algorithm is chosen, it will generate only cardinal successors during expansion of current node, but after resetting parent it will probably break this restriction. Default value is "true".
   * **\<cutcorners>** - boolean tag that defines the possibilty to make diagonal moves when one adjacent cell is untraversable. The tag is ignored if diagonal moves are not allowed. Default value is "false".
   * **\<allowsqueeze>** - boolean tag that defines the possibility to make diagonal moves when both adjacent cells are untraversable. The tag is ignored if cutting corners is not allowed. Default value is "false".
 >- Optional tag <b>\<options></b>. Options that are not related to search.
