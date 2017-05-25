@@ -40,7 +40,7 @@
         <searchtype>astar</searchtype>
         <metrictype>diagonal</metrictype>
         <breakingties>g-max</breakingties>
-        <weight>1</weight>
+        <hweight>1</hweight>
         <allowdiagonal>true</allowdiagonal>
         <cutcorners>false</cutcorners>
         <allowsqueeze>false</allowsqueeze>
