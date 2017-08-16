@@ -66,7 +66,10 @@ bool Config::getConfig(const char *FileName)
         SearchParams = new double[N];
         SearchParams[CN_SP_ST] = CN_SP_ST_ASTAR;
         if (value == CNS_SP_ST_JP_SEARCH)
-            SearchParams[CN_SP_ST] = CN_SP_ST_JP_SEARCH;
+        {
+            std::cout << "Warning! Jump Point Search algorithm is not supported! Search type is changed to A*!" << std::endl;
+            SearchParams[CN_SP_ST] = CN_SP_ST_ASTAR;
+        }
         else if (value == CNS_SP_ST_TH)
             SearchParams[CN_SP_ST] = CN_SP_ST_TH;
         element = algorithm->FirstChildElement(CNS_TAG_HW);
@@ -254,10 +257,10 @@ bool Config::getConfig(const char *FileName)
                 LogParams[CN_LP_LEVEL] = CN_LP_LEVEL_TINY_WORD;
             else if (value == CN_LP_LEVEL_SHORT_WORD || value == CN_LP_LEVEL_SHORT_VALUE)
                 LogParams[CN_LP_LEVEL] = CN_LP_LEVEL_SHORT_WORD;
-            else if (value == CN_LP_LEVEL_MEDIUM_WORD || value == CN_LP_LEVEL_MEDIUM_VALUE)
-                LogParams[CN_LP_LEVEL] = CN_LP_LEVEL_MEDIUM_WORD;
-            else if (value == CN_LP_LEVEL_FULL_WORD || value == CN_LP_LEVEL_FULL_VALUE)
-                LogParams[CN_LP_LEVEL] = CN_LP_LEVEL_FULL_WORD;
+            //else if (value == CN_LP_LEVEL_MEDIUM_WORD || value == CN_LP_LEVEL_MEDIUM_VALUE)
+            //    LogParams[CN_LP_LEVEL] = CN_LP_LEVEL_MEDIUM_WORD;
+            //else if (value == CN_LP_LEVEL_FULL_WORD || value == CN_LP_LEVEL_FULL_VALUE)
+            //    LogParams[CN_LP_LEVEL] = CN_LP_LEVEL_FULL_WORD;
             else {
                 std::cout << "'" << CNS_TAG_LOGLVL << "' is not correctly specified" << std::endl;
                 std::cout << "Value of '" << CNS_TAG_LOGLVL << "' tag was defined to 'short log' (1)." << std::endl;

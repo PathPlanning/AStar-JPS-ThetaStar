@@ -39,7 +39,7 @@ class Mission
         ISearch*                search;
         ILogger*                logger;
         const char*             fileName;
-        SearchResult            sr;
+        SearchResult            sr, sr_replan;
 };
 
 #endif

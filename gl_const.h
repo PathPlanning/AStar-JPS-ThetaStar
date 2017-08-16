@@ -1,8 +1,7 @@
 #ifndef GL_CONST_H
 #define	GL_CONST_H
 
-#define CN_PI_CONSTANT 3.14159265359
-#define CN_SQRT_TWO    1.41421356237
+#define CN_DESTROY_NUM  3
 
 //XML tags
 #define CNS_TAG_ROOT "root"

@@ -73,7 +73,9 @@ void Mission::createSearch()
 
 void Mission::startSearch()
 {
-    sr = search->startSearch(logger, map, options);
+    sr = search->startSearch(logger, map, options,true);
+    std::cout<<"REPLAN!\n";
+    sr_replan = search->startSearch(logger, map, options,false);
 }
 
 void Mission::printSearchResultsToConsole()
@@ -84,20 +86,35 @@ void Mission::printSearchResultsToConsole()
     std::cout << "found!" << std::endl;
     std::cout << "numberofsteps=" << sr.numberofsteps << std::endl;
     std::cout << "nodescreated=" << sr.nodescreated << std::endl;
+    std::cout << "secondlength=" << sr.secondlength << std::endl;
     if (sr.pathfound) {
         std::cout << "pathlength=" << sr.pathlength << std::endl;
         std::cout << "pathlength_scaled=" << sr.pathlength * map.cellSize << std::endl;
     }
     std::cout << "time=" << sr.time << std::endl;
+    std::cout<<"\nAfter replanning:\n";
+    std::cout << "Path ";
+    if (!sr_replan.pathfound)
+        std::cout << "NOT ";
+    std::cout << "found!" << std::endl;
+    std::cout << "numberofsteps=" << sr_replan.numberofsteps << std::endl;
+    std::cout << "nodescreated=" << sr_replan.nodescreated << std::endl;
+    std::cout << "secondlength=" << sr_replan.secondlength << std::endl;
+    if (sr_replan.pathfound) {
+        std::cout << "pathlength=" << sr_replan.pathlength << std::endl;
+        std::cout << "pathlength_scaled=" << sr_replan.pathlength * map.cellSize << std::endl;
+    }
+    std::cout << "time=" << sr_replan.time << std::endl;
 }
 
 void Mission::saveSearchResultsToLog()
 {
-    logger->writeToLogSummary(sr.numberofsteps, sr.nodescreated, sr.pathlength, sr.time, map.cellSize);
-    if (sr.pathfound) {
-        logger->writeToLogPath(*sr.lppath);
-        logger->writeToLogHPpath(*sr.hppath);
-        logger->writeToLogMap(map, *sr.lppath);
+    logger->writeToLogSummary(sr, sr_replan);
+    if (sr_replan.pathfound) {
+       // logger->writeToLogPath(*sr_replan.lppath);
+        //logger->writeToLogHPpath(*sr_replan.hppath);
+        //logger->writeToLogHPpath(sr_replan.fly_path);
+        //logger->writeToLogMap(map, *sr_replan.lppath);
     } else
         logger->writeToLogNotFound();
     logger->saveLog();

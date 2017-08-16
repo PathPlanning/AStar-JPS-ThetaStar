@@ -21,7 +21,8 @@ bool XmlLogger::getLog(const char *FileName, const std::string *LogParams)
         else
             str.append("_log");
         LogFileName.append(str);
-    } else if (LogParams[CN_LP_PATH] == "") {
+    }
+    else if (LogParams[CN_LP_PATH] == "") {
         LogFileName.append(FileName);
         std::string::iterator it = LogFileName.end();
         while (*it != '\\')
@@ -29,7 +30,8 @@ bool XmlLogger::getLog(const char *FileName, const std::string *LogParams)
         ++it;
         LogFileName.erase(it, LogFileName.end());
         LogFileName.append(LogParams[CN_LP_NAME]);
-    } else if (LogParams[CN_LP_NAME] == "") {
+    }
+    else if (LogParams[CN_LP_NAME] == "") {
         LogFileName.append(LogParams[CN_LP_PATH]);
         if (*(--LogParams[CN_LP_PATH].end()) != '\\') LogFileName.append("\\");
         std::string lfn;
@@ -42,7 +44,8 @@ bool XmlLogger::getLog(const char *FileName, const std::string *LogParams)
         else
             str.append("_log");
         LogFileName.append(str);
-    } else {
+    }
+    else {
         LogFileName.append(LogParams[CN_LP_PATH]);
         if (*(--LogParams[CN_LP_PATH].end()) != '\\') LogFileName.append("\\");
         LogFileName.append(LogParams[CN_LP_NAME]);
@@ -64,13 +67,9 @@ bool XmlLogger::getLog(const char *FileName, const std::string *LogParams)
         log = doc.NewElement(CNS_TAG_MAPFN);
         log->LinkEndChild(doc.NewText(FileName));
         root->InsertEndChild(log);
-
         root->InsertEndChild(doc.NewElement(CNS_TAG_SUM));
-
         root->InsertEndChild(doc.NewElement(CNS_TAG_PATH));
-
         root->InsertEndChild(doc.NewElement(CNS_TAG_LPLEVEL));
-
         root->InsertEndChild(doc.NewElement(CNS_TAG_HPLEVEL));
     }
 
@@ -252,19 +251,26 @@ void XmlLogger::writeToLogHPpath(const std::list<Node> &hppath)
     }
 }
 
-void XmlLogger::writeToLogSummary(unsigned int numberofsteps, unsigned int nodescreated, float length, double time, double cellSize)
+
+
+void XmlLogger::writeToLogSummary(const SearchResult &plan, const SearchResult &replan)
 {
     if (loglevel == CN_LP_LEVEL_NOPE_WORD)
         return;
 
     XMLElement *summary = doc.FirstChildElement(CNS_TAG_ROOT);
-    summary = summary->FirstChildElement(CNS_TAG_LOG)->FirstChildElement(CNS_TAG_SUM);
+    summary = summary->FirstChildElement(CNS_TAG_LOG)->LastChildElement(CNS_TAG_SUM);
     XMLElement *element = summary->ToElement();
-    element->SetAttribute(CNS_TAG_ATTR_NUMOFSTEPS, numberofsteps);
-    element->SetAttribute(CNS_TAG_ATTR_NODESCREATED, nodescreated);
-    element->SetAttribute(CNS_TAG_ATTR_LENGTH, length);
-    element->SetAttribute(CNS_TAG_ATTR_LENGTH_SCALED, length*cellSize);
-    element->SetAttribute(CNS_TAG_ATTR_TIME, std::to_string(time).c_str());
+    element->SetAttribute(CNS_TAG_ATTR_NUMOFSTEPS, plan.numberofsteps);
+    element->SetAttribute(CNS_TAG_ATTR_NODESCREATED, plan.nodescreated);
+    element->SetAttribute(CNS_TAG_ATTR_LENGTH, plan.pathlength);
+    element->SetAttribute(CNS_TAG_ATTR_TIME, std::to_string(plan.time).c_str());
+    element->SetAttribute("flying_length", plan.secondlength);
+    element->SetAttribute("re_steps", replan.numberofsteps);
+    element->SetAttribute("re_nodes", replan.nodescreated);
+    element->SetAttribute("re_length", replan.pathlength);
+    element->SetAttribute("re_time", replan.time);
+    element->SetAttribute("re_flying_length", replan.secondlength);
 }
 
 void XmlLogger::writeToLogNotFound()

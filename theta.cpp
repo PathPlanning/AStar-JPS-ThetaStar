@@ -107,10 +107,14 @@ bool Theta::lineOfSight(int i1, int j1, int i2, int j2, const Map &map, bool cut
 
 Node Theta::resetParent(Node current, Node parent, const Map &map, const EnvironmentOptions &options )
 {
-    if (parent.parent == nullptr)
+    if(parent.parent == nullptr || current == *parent.parent)
         return current;
-    if(current == *parent.parent)
-        return current;
+    /*if(parent.parent == nullptr
+            || (abs(current.i - parent.parent->i)<=abs(parent.i - parent.parent->i)
+                && abs(current.j - parent.parent->j)<abs(parent.j - parent.parent->j))
+            || (abs(current.i - parent.parent->i)<abs(parent.i - parent.parent->i)
+                && abs(current.j - parent.parent->j)<=abs(parent.j - parent.parent->j)))
+        return current;*/
     if (lineOfSight(parent.parent->i, parent.parent->j, current.i, current.j, map, options.cutcorners)) {
         current.g = parent.parent->g + distance(parent.parent->i, parent.parent->j, current.i, current.j);
         current.parent = parent.parent;

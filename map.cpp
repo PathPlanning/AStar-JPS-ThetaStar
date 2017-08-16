@@ -11,6 +11,7 @@ Map::Map()
     goal_j = -1;
     Grid = NULL;
     cellSize = 1;
+    numberOfObs = 0;
 }
 
 Map::~Map()
@@ -24,12 +25,12 @@ Map::~Map()
 
 bool Map::CellIsTraversable(int i, int j) const
 {
-    return (Grid[i][j] == CN_GC_NOOBS);
+    return (Grid[i][j] <= 0);
 }
 
 bool Map::CellIsObstacle(int i, int j) const
 {
-    return (Grid[i][j] != CN_GC_NOOBS);
+    return (Grid[i][j] > 0);
 }
 
 bool Map::CellOnGrid(int i, int j) const
@@ -302,7 +303,7 @@ bool Map::getMap(const char *FileName)
                   << std::endl;
         return false;
     }
-
+    this->enumerateObstacles();
     return true;
 }
 
@@ -315,4 +316,59 @@ int Map::getValue(int i, int j) const
         return -1;
 
     return Grid[i][j];
+}
+
+void Map::enumerateObstacles()
+{
+    if(width<0){
+        std::cout<<"ERROR! Map is not specified!\n";
+        return;
+    }
+    std::vector<std::pair<int, int>> open(0);
+    int curNum = 1;
+    for(int i = 0; i < height; i++)
+        for(int j = 0; j < width; j++)
+            if(Grid[i][j] != CN_GC_NOOBS)
+                Grid[i][j] = -1;
+    for(int i = 0; i < height; i++)
+        for(int j = 0; j < width; j++)
+            if(Grid[i][j] == -1){
+                Grid[i][j] = curNum;
+                open.push_back({i,j});
+                while(!open.empty()){
+                    std::pair<int, int> cur = open.back();
+                    open.pop_back();
+                    if(cur.first - 1 >= 0 && Grid[cur.first-1][cur.second] == -1)
+                    {
+                        Grid[cur.first-1][cur.second] = curNum;
+                        open.push_back({cur.first-1, cur.second});
+                    }
+                    if(cur.first + 1 < height && Grid[cur.first+1][cur.second] == -1)
+                    {
+                        Grid[cur.first+1][cur.second] = curNum;
+                        open.push_back({cur.first+1, cur.second});
+                    }
+                    if(cur.second - 1 >= 0 && Grid[cur.first][cur.second-1] == -1)
+                    {
+                        Grid[cur.first][cur.second-1] = curNum;
+                        open.push_back({cur.first, cur.second-1});
+                    }
+                    if(cur.second + 1 < width && Grid[cur.first][cur.second+1] == -1)
+                    {
+                        Grid[cur.first][cur.second+1] = curNum;
+                        open.push_back({cur.first, cur.second+1});
+                    }
+                }
+                open.clear();
+                curNum++;
+            }
+    numberOfObs = curNum;
+}
+
+void Map::destroyObstacle(int n)
+{
+    for(int i = 0; i < height; i++)
+        for(int j = 0; j < width; j++)
+            if(Grid[i][j] == n)
+                Grid[i][j] = -1;
 }
