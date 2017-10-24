@@ -9,7 +9,7 @@ Map::Map()
     start_j = -1;
     goal_i = -1;
     goal_j = -1;
-    Grid = NULL;
+    Grid = nullptr;
     cellSize = 1;
 }
 
@@ -55,6 +55,7 @@ bool Map::getMap(const char *FileName)
         std::cout << "Error opening XML file!" << std::endl;
         return false;
     }
+
     // Get ROOT element
     root = doc.FirstChildElement(CNS_TAG_ROOT);
     if (!root) {
@@ -76,8 +77,10 @@ bool Map::getMap(const char *FileName)
 
         stream.str("");
         stream.clear();
-        stream << element->GetText();
 
+		if(value != CNS_TAG_GRID)
+			stream << element->GetText();
+			
         if (!hasGridMem && hasHeight && hasWidth) {
             Grid = new int *[height];
             for (int i = 0; i < height; ++i)

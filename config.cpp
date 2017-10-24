@@ -263,7 +263,7 @@ bool Config::getConfig(const char *FileName)
                 std::cout << "Value of '" << CNS_TAG_LOGLVL << "' tag was defined to 'short log' (1)." << std::endl;
                 LogParams[CN_LP_LEVEL] = CN_LP_LEVEL_SHORT_WORD;
             }
-            std::cout << LogParams[CN_LP_LEVEL] << std::endl;
+            std::cout << "LogLevel: " << LogParams[CN_LP_LEVEL] << std::endl;
         }
 
 

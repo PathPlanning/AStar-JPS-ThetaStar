@@ -5,6 +5,7 @@
 #include <sstream>
 #include <string>
 #include <algorithm>
+#include <vector>	
 class Map
 {
     public:
