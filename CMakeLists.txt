@@ -8,7 +8,6 @@ set(SOURCE_FILES
         environmentoptions.cpp
         ilogger.h
         jp_search.cpp
-        list.h
         mission.cpp
         searchresult.h
         xmllogger.cpp
@@ -27,7 +26,6 @@ set(SOURCE_FILES
         dijkstra.h
         gl_const.h
         isearch.h
-        list.cpp
         map.h
         node.h
         theta.h
