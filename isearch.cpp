@@ -85,9 +85,11 @@ Node ISearch::findMin()
     min.F = std::numeric_limits<double>::infinity();
     for (int i = 0; i < open.size(); i++)
         if (!open[i].empty() && open[i].begin()->F <= min.F)
-            if (open[i].begin()->F == min.F){
-                if((breakingties == CN_SP_BT_GMAX && open[i].begin()->g >= min.g) ||
-                   (breakingties == CN_SP_BT_GMIN && open[i].begin()->g <= min.g))
+            if (open[i].begin()->F == min.F)
+            {
+                if((breakingties == CN_SP_BT_GMAX && open[i].begin()->g > min.g) ||
+                   (breakingties == CN_SP_BT_GMIN && open[i].begin()->g < min.g) ||
+                   (open[i].begin()->g == min.g && open[i].begin()->j < min.j))
                     min = *open[i].begin();
             }
             else
@@ -175,23 +177,31 @@ void ISearch::addOpen(Node newNode)
     bool posFound = false;
     for (iter = open[newNode.i].begin(); iter != open[newNode.i].end(); ++iter) {
         if (!posFound && iter->F >= newNode.F)
-            if (iter->F == newNode.F) {
-                if((breakingties == CN_SP_BT_GMAX && newNode.g >= iter->g) ||
-                   (breakingties == CN_SP_BT_GMIN && newNode.g <= iter->g)) {
+        {
+            if (iter->F == newNode.F)
+            {
+                if((breakingties == CN_SP_BT_GMAX && newNode.g > iter->g) ||
+                   (breakingties == CN_SP_BT_GMIN && newNode.g < iter->g) ||
+                   (newNode.g == iter->g && newNode.j < iter->j))
+                {
                     pos=iter;
                     posFound=true;
                 }
             }
-            else {
+            else
+            {
                 pos = iter;
                 posFound = true;
             }
-
-        if (iter->j == newNode.j) {
+        }
+        if (iter->j == newNode.j)
+        {
             if (newNode.F >= iter->F)
                 return;
-            else {
-                if (pos == iter) {
+            else
+            {
+                if (pos == iter)
+                {
                     iter->F = newNode.F;
                     iter->g = newNode.g;
                     iter->parent = newNode.parent;
