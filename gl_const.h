@@ -16,6 +16,7 @@
         #define CNS_TAG_FINX        "finishx"
         #define CNS_TAG_FINY        "finishy"
         #define CNS_TAG_GRID        "grid"
+        #define CNS_TAG_GRID_PRED   "grid_pred"
             #define CNS_TAG_ROW     "row"
 
     #define CNS_TAG_ALG             "algorithm"

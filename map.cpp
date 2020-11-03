@@ -83,8 +83,12 @@ bool Map::getMap(const char *FileName)
 			
         if (!hasGridMem && hasHeight && hasWidth) {
             Grid = new int *[height];
+            heuristic.resize(height);
             for (int i = 0; i < height; ++i)
+            {
                 Grid[i] = new int[width];
+                heuristic[i].resize(width);
+            }
             hasGridMem = true;
         }
 
@@ -285,6 +289,55 @@ bool Map::getMap(const char *FileName)
                 element = element->NextSiblingElement();
             }
         }
+        else if (value == CNS_TAG_GRID_PRED) {
+            rowiter = 0;
+            grid_i = 0;
+            grid_j = 0;
+            hasGrid = true;
+            if (!(hasHeight && hasWidth)) {
+                std::cout << "Error! No '" << CNS_TAG_WIDTH << "' tag or '" << CNS_TAG_HEIGHT << "' tag before '"
+                          << CNS_TAG_GRID_PRED << "'tag encountered!" << std::endl;
+                return false;
+            }
+            element = mapnode->FirstChildElement();
+            while (grid_i < height) {
+                if (!element) {
+                    std::cout << "Error! Not enough '" << CNS_TAG_ROW << "' tags inside '" << CNS_TAG_GRID << "' tag."
+                              << std::endl;
+                    std::cout << "Number of '" << CNS_TAG_ROW
+                              << "' tags should be equal (or greater) than the value of '" << CNS_TAG_HEIGHT
+                              << "' tag which is " << height << std::endl;
+                    return false;
+                }
+                std::string str = element->GetText();
+                std::vector<std::string> elems;
+                std::stringstream ss(str);
+                std::string item;
+                while (std::getline(ss, item, ' '))
+                    elems.push_back(item);
+                rowiter = grid_j = 0;
+                double val;
+                if (elems.size() > 0)
+                    for (grid_j = 0; grid_j < width; ++grid_j) {
+                        if (grid_j == elems.size())
+                            break;
+                        stream.str("");
+                        stream.clear();
+                        stream << elems[grid_j];
+                        stream >> val;
+                        heuristic[grid_i][grid_j] = val;
+                    }
+
+                if (grid_j != width) {
+                    std::cout << "Invalid value on " << CNS_TAG_GRID << " in the " << grid_i + 1 << " " << CNS_TAG_ROW
+                              << std::endl;
+                    return false;
+                }
+                ++grid_i;
+
+                element = element->NextSiblingElement();
+            }
+        }
     }
     //some additional checks
     if (!hasGrid) {
@@ -299,7 +352,8 @@ bool Map::getMap(const char *FileName)
                   << std::endl;
         return false;
     }
-
+    //std::swap(start_i, start_j);
+    //std::swap(goal_i, goal_j);
     if (Grid[goal_i][goal_j] != CN_GC_NOOBS) {
         std::cout << "Error! Goal cell is not traversable (cell's value is" << Grid[goal_i][goal_j] << ")!"
                   << std::endl;
@@ -318,4 +372,15 @@ int Map::getValue(int i, int j) const
         return -1;
 
     return Grid[i][j];
+}
+
+double Map::getHValue(int i, int j) const
+{
+    if (i < 0 || i >= height)
+        return -1;
+
+    if (j < 0 || j >= width)
+        return -1;
+
+    return heuristic[i][j];
 }

@@ -9,6 +9,7 @@ ISearch::ISearch()
     hweight = 1;
     breakingties = CN_SP_BT_GMAX;
     openSize = 0;
+    focal_weight = 1.5;
 }
 
 ISearch::~ISearch(void) {}
@@ -20,6 +21,17 @@ bool ISearch::stopCriterion()
         return true;
     }
     return false;
+}
+
+void ISearch::printLists()
+{
+    for (int i = 0; i < open.size(); i++)
+        for(auto it = open[i].begin(); it != open[i].end(); it++)
+            std::cout<<it->i<<","<<it->j<<"  ";
+    std::cout<<"\n\n";
+    for(auto it = focal.begin(); it!=focal.end(); it++)
+        std::cout<<it->i<<","<<it->j<<"  ";
+    std::cout<<"\n\n";
 }
 
 SearchResult ISearch::startSearch(ILogger *Logger, const Map &map, const EnvironmentOptions &options)
@@ -34,14 +46,22 @@ SearchResult ISearch::startSearch(ILogger *Logger, const Map &map, const Environ
     curNode.H = computeHFromCellToCell(curNode.i, curNode.j, map.goal_i, map.goal_j, options);
     curNode.F = hweight * curNode.H;
     curNode.parent = nullptr;
-    addOpen(curNode);
+    fmin = curNode.F;
+    addOpen(curNode, map);
     int closeSize = 0;
+
     bool pathfound = false;
     while (!stopCriterion()) {
+        double oldmin = fmin;
+        //printLists();
         curNode = findMin();
+        if(oldmin != fmin)
+            updateFocal(map);
+        //std::cout<<map.getHValue(curNode.i,curNode.j)<<" ";
+        std::cout<<curNode.i<<" "<<curNode.j<<" "<<curNode.g<<" "<<curNode.H<<" "<<curNode.F<<" "<<map.getHValue(curNode.i, curNode.j)<<" \n";
         close.insert({curNode.i * map.width + curNode.j, curNode});
         closeSize++;
-        open[curNode.i].pop_front();
+        //open[curNode.i].pop_front();
         openSize--;
         if (curNode.i == map.goal_i && curNode.j == map.goal_j) {
             pathfound = true;
@@ -55,7 +75,7 @@ SearchResult ISearch::startSearch(ILogger *Logger, const Map &map, const Environ
             it->H = computeHFromCellToCell(it->i, it->j, map.goal_i, map.goal_j, options);
             *it = resetParent(*it, *it->parent, map, options);
             it->F = it->g + hweight * it->H;
-            addOpen(*it);
+            addOpen(*it, map);
             it++;
         }
         Logger->writeToLogOpenClose(open, close, false);
@@ -81,17 +101,29 @@ SearchResult ISearch::startSearch(ILogger *Logger, const Map &map, const Environ
 
 Node ISearch::findMin()
 {
-    Node min;
-    min.F = std::numeric_limits<double>::infinity();
+    /*Node min;
+    min.F = 0;//std::numeric_limits<double>::infinity();
     for (int i = 0; i < open.size(); i++)
-        if (!open[i].empty() && open[i].begin()->F <= min.F)
-            if (open[i].begin()->F == min.F){
-                if((breakingties == CN_SP_BT_GMAX && open[i].begin()->g >= min.g) ||
-                   (breakingties == CN_SP_BT_GMIN && open[i].begin()->g <= min.g))
-                    min = *open[i].begin();
-            }
-            else
-                min = *open[i].begin();
+        if (!open[i].empty() && open[i].begin()->F >= min.F)
+            min = *open[i].begin();
+    return min;*/
+    Node min;
+    FocalElem elem = *focal.begin();
+    for(auto it = open[elem.i].begin(); it != open[elem.i].end(); it++)
+        if(it->j == elem.j)
+        {
+            min = *it;
+            //std::cout<<"MIN "<<min.i<<" "<<min.j<<"\n";
+            //std::cout<<"erased "<<it->i<<" "<<it->j<<"\n";
+            open[elem.i].erase(it);
+            focal.pop_front();
+            break;
+        }
+    fmin = std::numeric_limits<double>::infinity();
+    for (int i = 0; i < open.size(); i++)
+        if (!open[i].empty() && open[i].begin()->F <= fmin)
+            fmin = open[i].begin()->F;
+
     return min;
 }
 
@@ -161,21 +193,93 @@ void ISearch::makeSecondaryPath()
     }
 }
 
-void ISearch::addOpen(Node newNode)
+void ISearch::updateFocal(const Map &map)
+{
+    //std::cout<<"UPDATE\n";
+    auto it = overbounded_elements.begin();
+    while(!overbounded_elements.empty())
+    {
+        if(it->F <= fmin*focal_weight)
+        {
+            addFocal(*it, map);
+            overbounded_elements.erase(it);
+            it = overbounded_elements.begin();
+            continue;
+        }
+        break;
+    }
+    return;
+}
+void ISearch::addFocal(FocalElem elem, const Map &map)
+{
+    elem.h = map.getHValue(elem.i, elem.j);
+    //std::cout<<"ADD "<<elem.i<<" "<<elem.j<<"\n";
+    if(elem.F > fmin*focal_weight)
+    {
+        bool inserted(false);
+        for(auto it = overbounded_elements.begin(); it != overbounded_elements.end(); it++)
+            if(it->F > elem.F)
+            {
+                overbounded_elements.insert(it, elem);
+                inserted = true;
+                break;
+            }
+        if(!inserted)
+            overbounded_elements.push_back(elem);
+    }
+    else
+    {
+        bool inserted(false);
+        for(auto it = focal.begin(); it != focal.end(); it++)
+            if((it->h < elem.h) || (fabs(it->h - elem.h) < 1e-6 && it->h > elem.h))// || (fabs(it->h - elem.h) < 1e-6 && fabs(it->F - elem.F) < 1e-6 && elem.g > it->g))
+            {
+                focal.insert(it, elem);
+                inserted = true;
+                break;
+            }
+        if(!inserted)
+            focal.push_back(elem);
+    }
+}
+
+void ISearch::eraseFocal(FocalElem elem)
+{
+    for(auto it = overbounded_elements.begin(); it != overbounded_elements.end(); it++)
+        if(it->i == elem.i && it->j == elem.j)
+        {
+            overbounded_elements.erase(it);
+            return;
+        }
+    for(auto it = focal.begin(); it != focal.end(); it++)
+        if(it->i == elem.i && it->j == elem.j)
+        {
+            focal.erase(it);
+            return;
+        }
+    return;
+}
+
+void ISearch::addOpen(Node newNode, const Map &map)
 {
     std::list<Node>::iterator iter, pos;
 
     if (open[newNode.i].size() == 0) {
         open[newNode.i].push_back(newNode);
         openSize++;
+        addFocal(FocalElem(newNode), map);
         return;
     }
 
     pos = open[newNode.i].end();
     bool posFound = false;
     for (iter = open[newNode.i].begin(); iter != open[newNode.i].end(); ++iter) {
-        if (!posFound && iter->F >= newNode.F)
-            if (iter->F == newNode.F) {
+        if (!posFound && iter->F < newNode.F)
+        {
+            pos=iter;
+            posFound=true;
+        }
+
+            /*if (iter->F == newNode.F) {
                 if((breakingties == CN_SP_BT_GMAX && newNode.g >= iter->g) ||
                    (breakingties == CN_SP_BT_GMIN && newNode.g <= iter->g)) {
                     pos=iter;
@@ -185,7 +289,7 @@ void ISearch::addOpen(Node newNode)
             else {
                 pos = iter;
                 posFound = true;
-            }
+            }*/
 
         if (iter->j == newNode.j) {
             if (newNode.F >= iter->F)
@@ -198,6 +302,7 @@ void ISearch::addOpen(Node newNode)
                     return;
                 }
                 open[newNode.i].erase(iter);
+                eraseFocal(FocalElem(newNode));
                 openSize--;
                 break;
             }
@@ -205,4 +310,6 @@ void ISearch::addOpen(Node newNode)
     }
     openSize++;
     open[newNode.i].insert(pos, newNode);
+    addFocal(FocalElem(newNode), map);
+    return;
 }

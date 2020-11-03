@@ -18,12 +18,14 @@ class Map
         bool CellOnGrid (int i, int j) const;
         bool CellIsObstacle(int i, int j) const;
         int  getValue(int i, int j) const;
+        double  getHValue(int i, int j) const;
 
         int     height, width;
         int     start_i, start_j;
         int     goal_i, goal_j;
         double  cellSize;
         int**   Grid;
+        std::vector<std::vector<double>> heuristic;
 };
 
 #endif
