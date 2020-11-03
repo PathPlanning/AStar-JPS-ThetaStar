@@ -9,7 +9,7 @@ CONFIG   += console
 CONFIG   -= app_bundle
 TEMPLATE = app
 QMAKE_CXXFLAGS += -std=c++11 -O2 -Wall -Wextra
-
+INCLUDEPATH += D:/boost_1_73_0
 win32 {
 QMAKE_LFLAGS += -static -static-libgcc -static-libstdc++
 }
@@ -30,6 +30,7 @@ SOURCES += \
     environmentoptions.cpp
 
 HEADERS += \
+    structs.h \
     tinyxml2.h \
     node.h \
     gl_const.h \

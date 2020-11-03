@@ -6,6 +6,7 @@
 #include <list>
 #include <math.h>
 #include <unordered_map>
+#include "structs.h"
 
 class ISearch
 {
@@ -18,8 +19,8 @@ class ISearch
     protected:
         Node findMin();
         virtual void addOpen(Node newNode, const Map &map);
-        virtual void addFocal(FocalElem elem, const Map &map);
-        virtual void eraseFocal(FocalElem elem);
+        virtual void addFocal(FocalElem elem, bool was_in_open);
+        virtual void addOverbounded(FocalElem elem, bool was_in_open);
         virtual void updateFocal(const Map &map);
         virtual double computeHFromCellToCell(int start_i, int start_j, int fin_i, int fin_j, const EnvironmentOptions &options) = 0;
         virtual std::list<Node> findSuccessors(Node curNode, const Map &map, const EnvironmentOptions &options);
@@ -32,9 +33,11 @@ class ISearch
         SearchResult                    sresult;
         std::list<Node>                 lppath, hppath;
         std::unordered_map<int,Node>    close;
-        std::vector<std::list<Node>>    open;
-        std::list<FocalElem>            focal;
-        std::list<FocalElem>            overbounded_elements;
+        OPEN_container                  open;
+        FOCAL_container                 focal;
+//        std::vector<std::list<Node>>    open;
+//        std::list<FocalElem>            focal;
+        FOCAL_container                 overbounded_elements;
         double                          fmin;
         double                          focal_weight;
         int                             openSize;

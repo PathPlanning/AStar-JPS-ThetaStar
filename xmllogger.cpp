@@ -145,26 +145,26 @@ void XmlLogger::writeToLogOpenClose(const std::vector<std::list<Node> > &open, c
     child = lowlevel->LastChildElement();
 
     Node min;
-    min.F = -1;
+    min.f = -1;
     int exc = 0;
     for (int i = 0; i < open.size(); ++i) {
         if (open[i].size() > 0) {
-            if (open[i].begin()->F <= min.F || min.F == -1) {
-                if (open[i].begin()->F == min.F && open[i].begin()->g > min.g) {
+            if (open[i].begin()->f <= min.f || min.f == -1) {
+                if (open[i].begin()->f == min.f && open[i].begin()->g > min.g) {
                     min = *open[i].begin();
                     exc = i;
-                } else if (open[i].begin()->F < min.F || min.F == -1) {
+                } else if (open[i].begin()->f < min.f || min.f == -1) {
                     min = *open[i].begin();
                     exc = i;
                 }
             }
         }
     }
-    if (min.F != -1) {
+    if (min.f != -1) {
         element = doc.NewElement(CNS_TAG_POINT);
         element->SetAttribute(CNS_TAG_ATTR_X, min.j);
         element->SetAttribute(CNS_TAG_ATTR_Y, min.i);
-        element->SetAttribute(CNS_TAG_ATTR_F, min.F);
+        element->SetAttribute(CNS_TAG_ATTR_F, min.f);
         element->SetAttribute(CNS_TAG_ATTR_G, min.g);
         if (min.g > 0) {
             element->SetAttribute(CNS_TAG_ATTR_PARX, min.parent->j);
@@ -179,7 +179,7 @@ void XmlLogger::writeToLogOpenClose(const std::vector<std::list<Node> > &open, c
                     element = doc.NewElement(CNS_TAG_POINT);
                     element->SetAttribute(CNS_TAG_ATTR_X, it->j);
                     element->SetAttribute(CNS_TAG_ATTR_Y, it->i);
-                    element->SetAttribute(CNS_TAG_ATTR_F, it->F);
+                    element->SetAttribute(CNS_TAG_ATTR_F, it->f);
                     element->SetAttribute(CNS_TAG_ATTR_G, it->g);
                     if (it->g > 0) {
                         element->SetAttribute(CNS_TAG_ATTR_PARX, it->parent->j);
@@ -199,7 +199,7 @@ void XmlLogger::writeToLogOpenClose(const std::vector<std::list<Node> > &open, c
         element = doc.NewElement(CNS_TAG_POINT);
         element->SetAttribute(CNS_TAG_ATTR_X, it->second.j);
         element->SetAttribute(CNS_TAG_ATTR_Y, it->second.i);
-        element->SetAttribute(CNS_TAG_ATTR_F, it->second.F);
+        element->SetAttribute(CNS_TAG_ATTR_F, it->second.f);
         element->SetAttribute(CNS_TAG_ATTR_G, it->second.g);
         if (it->second.g > 0) {
             element->SetAttribute(CNS_TAG_ATTR_PARX, it->second.parent->j);

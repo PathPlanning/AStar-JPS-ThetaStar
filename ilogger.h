@@ -4,6 +4,7 @@
 #include "node.h"
 #include <unordered_map>
 #include <list>
+#include <structs.h>
 
 class ILogger
 {

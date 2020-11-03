@@ -12,7 +12,7 @@ double BFS::computeHFromCellToCell(int start_i, int start_j, int fin_i, int fin_
 
 void BFS::addOpen(Node newNode)
 {
-    std::list<Node>::iterator iter=open[newNode.i].begin();
+    /*std::list<Node>::iterator iter=open[newNode.i].begin();
 
     while(iter != open[newNode.i].end() && newNode.j != iter->j)
         ++iter;
@@ -26,6 +26,6 @@ void BFS::addOpen(Node newNode)
             return;
     }
     openSize++;
-    open[newNode.i].push_back(newNode);
+    open[newNode.i].push_back(newNode);*/
     return;
 }
