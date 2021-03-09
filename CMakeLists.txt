@@ -31,5 +31,7 @@ set(SOURCE_FILES
         theta.h
         tinyxml2.cpp
         tinyxml2.h
+        path_smoothing.h
+        path_smoothing.cpp
         )
 add_executable(AStar-JPS-ThetaStar ${SOURCE_FILES})

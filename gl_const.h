@@ -26,6 +26,7 @@
         #define CNS_TAG_AS          "allowsqueeze"
         #define CNS_TAG_AD          "allowdiagonal"
         #define CNS_TAG_CC          "cutcorners"
+        #define CNS_TAG_PS          "postsmoothing"
 
     #define CNS_TAG_OPT             "options"
         #define CNS_TAG_LOGLVL      "loglevel"
@@ -107,7 +108,7 @@
         #define CN_SP_BT_GMIN 0
         #define CN_SP_BT_GMAX 1
 
-
+    #define CN_SP_PS 7 //PostSmoothing
 
     //Log Configuration
     #define CN_LP_LEVEL 0

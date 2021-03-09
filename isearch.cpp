@@ -74,6 +74,7 @@ SearchResult ISearch::startSearch(ILogger *Logger, const Map &map, const Environ
     sresult.time = static_cast<double>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()) / 1000000000;
     if (pathfound)
         makeSecondaryPath();
+    
     sresult.hppath = &hppath; //Here is a constant pointer
     sresult.lppath = &lppath;
     return sresult;

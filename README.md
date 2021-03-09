@@ -31,7 +31,7 @@ Input file should contain:
 >- Mandatory tag <b>\<map></b>. It describes the environment.
   * **\<height>** and **\<width>** - mandatory tags that define size of the map. Origin is in the upper left corner. (0,0) - is upper left, (*width*-1, *height*-1) is lower right.
   * **\<startx>** and **\<starty>** - mandatory tags that define horizontal (X) and vertical (Y) offset of the start location from the upper left corner. Legal values for *startx* are [0, .., *width*-1], for *starty* - [0, .., *height*-1].
-  * **\<finishx>** and **\<finishy>** - mandatory tags that horizontal (X) and vertical (Y) offset of the goal location.
+  * **\<finishx>** and **\<finishy>** - mandatory tags that define horizontal (X) and vertical (Y) offset of the goal location.
   * **\<grid>** - mandatory tag that describes the square grid constituting the map. It consists of **\<row>** tags. Each **\<row>** contains a sequence of "0" and "1" separated by blanks. "0" stands for traversable cell, "1" - for untraversable (actually any other figure but "0" can be used instead of "1").
   * **\<cellsize>** - optional tag that defines the size of one cell. One might add it to calculate scaled length of the path.
   * **\<title>**, **\<URL>**, **\<coordinates>**, etc - optional tags containing additional information on the map.
@@ -43,6 +43,7 @@ Input file should contain:
   * **\<allowdiagonal>** - boolean tag that allows/prohibits diagonal moves. Default value is "true". Setting it to "false" restricts the agent to make cardinal (horizonal, vertical) moves only. If Theta* algorithm is used only cardinal successors will be generated during expansion of the current node, but after resetting parent the resultant move will probably violate this restriction. 
   * **\<cutcorners>** - boolean tag that defines the possibilty to make diagonal moves when one adjacent cell is untraversable. The tag is ignored if diagonal moves are not allowed. Default value is "false".
   * **\<allowsqueeze>** - boolean tag that defines the possibility to make diagonal moves when both adjacent cells are untraversable. The tag is ignored if cutting corners is not allowed. Default value is "false".
+  * **\<postsmoothing>** - boolean tag that allows to start the path smoothing procedure after pathfinding was ended. The tag is ignored if Theta* algorithm was chosen. Default value is "false".
 >- Optional tag <b>\<options></b>. Options that are not related to search.
   * **\<loglevel>** - defines the level of detalization of log-file. Default value is "1". Possible values:
     * "0" or "none" - log-file is not created.

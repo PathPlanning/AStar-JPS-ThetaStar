@@ -73,7 +73,12 @@ void Mission::createSearch()
 
 void Mission::startSearch()
 {
+
     sr = search->startSearch(logger, map, options);
+    if (config.SearchParams[CN_SP_PS])
+    {
+        smooth_search_result(sr, map, options.cutcorners);
+    }
 }
 
 void Mission::printSearchResultsToConsole()

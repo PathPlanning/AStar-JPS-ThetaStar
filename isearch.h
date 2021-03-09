@@ -5,6 +5,7 @@
 #include "environmentoptions.h"
 #include <list>
 #include <unordered_map>
+#include <cmath>
 
 class ISearch
 {

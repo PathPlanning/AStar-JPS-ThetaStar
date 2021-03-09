@@ -13,6 +13,7 @@
 #include "dijkstra.h"
 #include "theta.h"
 #include "xmllogger.h"
+#include "path_smoothing.h"
 
 class Mission
 {

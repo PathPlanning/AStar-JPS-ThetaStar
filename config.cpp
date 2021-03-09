@@ -52,17 +52,17 @@ bool Config::getConfig(const char *FileName)
     std::transform(value.begin(), value.end(), value.begin(), ::tolower);
 
     if (value == CNS_SP_ST_BFS) {
-        N = 4;
+        N = 8;
         SearchParams = new double[N];
         SearchParams[CN_SP_ST] = CN_SP_ST_BFS;
     }
     else if (value == CNS_SP_ST_DIJK) {
-        N = 4;
+        N = 8;
         SearchParams = new double[N];
         SearchParams[CN_SP_ST] = CN_SP_ST_DIJK;
     }
     else if (value == CNS_SP_ST_ASTAR || value == CNS_SP_ST_JP_SEARCH || value == CNS_SP_ST_TH) {
-        N = 7;
+        N = 8;
         SearchParams = new double[N];
         SearchParams[CN_SP_ST] = CN_SP_ST_ASTAR;
         if (value == CNS_SP_ST_JP_SEARCH)
@@ -113,7 +113,7 @@ bool Config::getConfig(const char *FileName)
             }
         }
 
-
+        
         element = algorithm->FirstChildElement(CNS_TAG_BT);
         if (!element) {
             std::cout << "Warning! No '" << CNS_TAG_BT << "' tag found in XML file" << std::endl;
@@ -224,7 +224,38 @@ bool Config::getConfig(const char *FileName)
             }
         }
     }
-
+    
+    element = algorithm->FirstChildElement(CNS_TAG_PS);
+    if (!element)
+    {
+        std::cout << "Warning! No '" << CNS_TAG_PS << "' element found in XML file." << std::endl;
+        std::cout << "Value of '" << CNS_TAG_PS << "' was defined to default - false" << std::endl;
+        SearchParams[CN_SP_PS] = 0;
+    }
+    else
+    {
+        SearchParams[CN_SP_PS] = 0;
+        if(SearchParams[CN_SP_ST] != CN_SP_ST_TH)
+        {
+            std::string check;
+            stream << element->GetText();
+            stream >> check;
+            stream.clear();
+            stream.str("");
+    
+            if (check != "1" && check != "true" && check != "0" && check != "false") {
+                std::cout << "Warning! Value of '" << CNS_TAG_PS << "' is not correctly specified." << std::endl;
+                std::cout << "Value of '" << CNS_TAG_PS << "' was defined to default - false " << std::endl;
+                SearchParams[CN_SP_PS] = 0;
+            }
+            else if (check == "1" || check == "true")
+                SearchParams[CN_SP_PS] = 1;
+            else
+                SearchParams[CN_SP_PS] = 0;
+        }
+    }
+    
+    
     options = root->FirstChildElement(CNS_TAG_OPT);
     LogParams = new std::string[3];
     LogParams[CN_LP_PATH] = "";
